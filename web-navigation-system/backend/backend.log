@@ -1,0 +1,75 @@
+🐕 狗蛋导航系统后端服务启动中...
+📊 API地址: http://localhost:5000
+🔧 调试模式: 开启
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.2.24.8:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 134-793-681
+39.144.1.128 - - [19/Mar/2026 22:10:50] "GET /api/sites HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:10:50] "GET /api/news HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:02] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:03] "POST /api/auth/login HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:03] "GET /api/sites?session_token=e6ae8b193189e480ce157a328e0ce628 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:05] "GET /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:07] "OPTIONS /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:07] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:08] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:08] "GET /api/wooden-fish/leaderboard HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:11] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:12] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:12] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:12] "OPTIONS /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:13] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:13] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:13] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:14] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:14] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:15] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:15] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:16] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:16] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:17] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:17] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:17] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:18] "OPTIONS /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:18] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:20] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:21] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:21] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:23] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:23] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:24] "OPTIONS /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:24] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:24] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:24] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:25] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:25] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:26] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:26] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:26] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:27] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:27] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:27] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:41] "OPTIONS /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:41] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+39.144.1.128 - - [19/Mar/2026 22:11:44] "GET /api/wooden-fish/leaderboard HTTP/1.1" 200 -
+180.101.245.252 - - [19/Mar/2026 22:17:09] "GET /api/wooden-fish/leaderboard HTTP/1.1" 200 -
+180.101.244.16 - - [19/Mar/2026 22:17:49] "GET /api/sites?session_token=e6ae8b193189e480ce157a328e0ce628 HTTP/1.1" 200 -
+193.32.162.101 - - [19/Mar/2026 23:49:23] code 400, message Bad request syntax ('SSH-2.0-Go')
+193.32.162.101 - - [19/Mar/2026 23:49:23] "[31m[1mSSH-2.0-Go[0m" 400 -
+204.76.203.51 - - [20/Mar/2026 01:14:40] "[33mGET http://azenv.net/ HTTP/1.1[0m" 404 -
+204.76.203.51 - - [20/Mar/2026 01:14:44] "[33mCONNECT dnspod.qcloud.com:443 HTTP/1.1[0m" 404 -
+171.83.2.151 - - [20/Mar/2026 02:12:19] "[33mGET / HTTP/1.1[0m" 404 -
+171.83.34.102 - - [20/Mar/2026 02:12:19] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+180.101.245.250 - - [20/Mar/2026 03:34:30] "GET /api/sites HTTP/1.1" 200 -
+180.101.245.250 - - [20/Mar/2026 03:34:30] "GET /api/news HTTP/1.1" 200 -
+39.144.1.128 - - [20/Mar/2026 04:54:22] "OPTIONS /api/auth/verify HTTP/1.1" 200 -
+180.101.244.13 - - [20/Mar/2026 04:57:04] "[33mGET / HTTP/1.1[0m" 404 -
+220.196.160.61 - - [20/Mar/2026 04:57:04] "[31m[1mGET /api/auth/verify HTTP/1.1[0m" 405 -
+180.101.245.251 - - [20/Mar/2026 04:57:07] "[33mGET / HTTP/1.1[0m" 404 -

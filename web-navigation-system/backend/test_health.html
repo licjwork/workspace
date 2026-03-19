@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>网站健康状态测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .site { margin: 10px; padding: 10px; border: 1px solid #ccc; }
+        .healthy { background-color: #d4edda; }
+        .slow { background-color: #fff3cd; }
+        .unhealthy { background-color: #f8d7da; }
+        .unreachable { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h1>网站健康状态测试</h1>
+    <div id="sites"></div>
+    
+    <script>
+        async function loadSites() {
+            try {
+                const response = await fetch('http://localhost:5000/api/sites');
+                const data = await response.json();
+                
+                const container = document.getElementById('sites');
+                
+                data.sites.forEach(site => {
+                    const siteDiv = document.createElement('div');
+                    siteDiv.className = `site ${site.health_status || 'unknown'}`;
+                    
+                    let statusIcon = '❓';
+                    if (site.health_status === 'healthy') statusIcon = '🟢';
+                    else if (site.health_status === 'slow') statusIcon = '🟡';
+                    else if (site.health_status === 'very_slow') statusIcon = '🟠';
+                    else if (site.health_status === 'unhealthy') statusIcon = '🔴';
+                    else if (site.health_status === 'unreachable') statusIcon = '⚫';
+                    
+                    siteDiv.innerHTML = `
+                        <h3>${statusIcon} ${site.name}</h3>
+                        <p>${site.description}</p>
+                        <p><strong>URL:</strong> ${site.url}</p>
+                        <p><strong>状态:</strong> ${site.health_status || '未知'}</p>
+                        <p><strong>响应时间:</strong> ${site.response_time || 'N/A'}ms</p>
+                        <p><strong>最后检测:</strong> ${site.last_checked || '未检测'}</p>
+                    `;
+                    
+                    container.appendChild(siteDiv);
+                });
+                
+            } catch (error) {
+                console.error('加载网站数据失败:', error);
+            }
+        }
+        
+        loadSites();
+    </script>
+</body>
+</html>

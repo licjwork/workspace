@@ -1,0 +1,227 @@
+/* 敲木鱼小组件 v2.0 样式 */
+.wooden-fish-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.wooden-fish {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border: 3px solid #654321;
+    cursor: pointer;
+}
+
+.wooden-fish:hover {
+    transform: scale(1.1);
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.wooden-fish.knocking {
+    animation: knockAnimation 0.3s ease-in-out;
+}
+
+@keyframes knockAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.fish-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.fish-counter {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 8px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.achievement-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: gold;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.fish-tooltip {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.wooden-fish-container:hover .fish-tooltip {
+    opacity: 1;
+}
+
+.leaderboard-btn {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+    font-size: 16px;
+}
+
+.leaderboard-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 成就通知 */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.achievement-notification {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* 排行榜模态框 */
+.leaderboard-modal {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    max-width: 400px;
+}
+
+.leaderboard-modal h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    text-align: center;
+}
+
+.leaderboard-modal ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.leaderboard-modal li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.leaderboard-modal button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.leaderboard-modal button:hover {
+    background: #45a049;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .wooden-fish-container {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .wooden-fish {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .fish-icon {
+        font-size: 20px;
+    }
+    
+    .fish-counter {
+        font-size: 12px;
+    }
+    
+    .leaderboard-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+}
+
+/* 无障碍支持 */
+.wooden-fish:focus {
+    outline: 2px solid #4A90E2;
+    outline-offset: 2px;
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+    .wooden-fish {
+        transition: none;
+    }
+    
+    .wooden-fish.knocking {
+        animation: none;
+    }
+    
+    .achievement-badge {
+        animation: none;
+    }
+}

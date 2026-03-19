@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "tavily": {
+      "version": "1.0.0",
+      "installedAt": 1773203464458
+    },
+    "agent-browser": {
+      "version": "0.2.0",
+      "installedAt": 1773278123385
+    },
+    "self-improving-agent": {
+      "version": "3.0.1",
+      "installedAt": 1773299000389
+    },
+    "summarize": {
+      "version": "1.0.0",
+      "installedAt": 1773354380631
+    },
+    "skill-vetter": {
+      "version": "1.0.0",
+      "installedAt": 1773359352579
+    },
+    "find-skills": {
+      "version": "0.1.0",
+      "installedAt": 1773359441785
+    }
+  }
+}

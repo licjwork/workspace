@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>注册测试</title>
+</head>
+<body>
+    <h1>注册测试页面</h1>
+    
+    <div>
+        <input type="text" id="username" placeholder="用户名">
+        <input type="password" id="password" placeholder="密码">
+        <button onclick="testRegister()">测试注册</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        function testRegister() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            fetch('http://localhost:5000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                console.log('响应状态:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('响应数据:', data);
+                document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                document.getElementById('result').innerHTML = '错误: ' + error;
+            });
+        }
+    </script>
+</body>
+</html>

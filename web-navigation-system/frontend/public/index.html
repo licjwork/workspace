@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>狗蛋导航系统</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="wooden-fish-v2.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐕 狗蛋导航</h1>
+            <div class="user-panel" id="userPanel">
+                <button class="auth-btn" onclick="showLoginForm()" id="loginBtn">登录/注册</button>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span id="username"></span>
+                    <button onclick="logout()" class="logout-btn">退出</button>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索网站...">
+                <button onclick="searchSites()">搜索</button>
+            </div>
+        </header>
+        
+        <!-- 登录/注册模态框 -->
+        <div class="modal" id="authModal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeAuthModal()">&times;</span>
+                <h2>用户登录/注册</h2>
+                <div class="auth-tabs">
+                    <button class="tab-btn active" onclick="showTab('login')">登录</button>
+                    <button class="tab-btn" onclick="showTab('register')">注册</button>
+                </div>
+                
+                <div id="loginTab" class="tab-content">
+                    <input type="text" id="loginUsername" placeholder="用户名">
+                    <input type="password" id="loginPassword" placeholder="密码">
+                    <button onclick="login()">登录</button>
+                </div>
+                
+                <div id="registerTab" class="tab-content" style="display: none;">
+                    <input type="text" id="registerUsername" placeholder="用户名（至少3个字符）">
+                    <input type="password" id="registerPassword" placeholder="密码（至少6个字符）">
+                    <input type="email" id="registerEmail" placeholder="邮箱（可选）">
+                    <button onclick="register()">注册</button>
+                </div>
+                
+                <div class="auth-message" id="authMessage"></div>
+            </div>
+        </div>
+        
+        <main>
+            <!-- 资讯小组件 -->
+            <div class="news-widget" id="newsWidget">
+                <h3>📰 每日资讯</h3>
+                <div class="news-slider" id="newsSlider">
+                    <div class="news-slides" id="newsSlides">
+                        <!-- 新闻幻灯片将通过JavaScript动态加载 -->
+                    </div>
+                    <div class="news-controls" id="newsControls">
+                        <button onclick="prevSlide()">上一页</button>
+                        <button onclick="nextSlide()">下一页</button>
+                    </div>
+                    <div class="news-indicators" id="newsIndicators">
+                        <!-- 指示器将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+                <div class="news-update-time" id="newsUpdateTime"></div>
+            </div>
+            
+            <div class="categories">
+                <div class="category active" data-category="all">全部</div>
+                <div class="category" data-category="ai">AI</div>
+                <div class="category" data-category="work">工作</div>
+                <div class="category" data-category="study">学习</div>
+                <div class="category" data-category="entertainment">娱乐</div>
+                <div class="category" data-category="tools">工具</div>
+                <div class="category" data-category="favorites" id="favoritesCategory">我的收藏</div>
+            </div>
+            
+            <div class="sites-grid" id="sitesContainer">
+                <!-- 网站卡片将通过JavaScript动态加载 -->
+            </div>
+            
+            <!-- 微博热搜区域 -->
+            <div class="weibo-hot-section" id="weiboHotSection" style="display: none;">
+                <h3>🐕 微博热搜</h3>
+                <div class="hot-list" id="hotList">
+                    <!-- 热搜列表将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Powered by 狗蛋 🐕</p>
+        </footer>
+    </div>
+    
+    <script src="wooden-fish-v2.js"></script>
+    <script src="sounds/knock-sound.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // 初始化木鱼组件 v2.0
+        window.addEventListener('DOMContentLoaded', function() {
+            const woodenFish = new WoodenFishV2();
+            window.woodenFish = woodenFish; // 暴露到全局，方便调试
+            
+            console.log('🐟 敲木鱼组件 v2.0 已加载');
+            
+            // 木鱼组件已集成到现有登录系统
+            // 使用localStorage和现有的登录逻辑
+        });
+    </script>
+</body>
+</html>
