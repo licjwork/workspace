@@ -28,7 +28,7 @@ class WoodenFishV2 {
                     this.isLoggedIn = true;
                 } else {
                     // 如果没有用户信息，验证会话获取用户ID
-                    const response = await fetch('http://82.156.52.192:5000/api/auth/verify', {
+                    const response = await fetch('/nav/api/auth/verify', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -187,7 +187,7 @@ class WoodenFishV2 {
             
             console.log(`同步用户 ${userId} 的木鱼计数 ${this.count} 到数据库`);
             
-            const response = await fetch(`http://82.156.52.192:5000/api/wooden-fish/user/${userId}`, {
+            const response = await fetch(`/nav/api/wooden-fish/user/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -225,7 +225,7 @@ class WoodenFishV2 {
             } else {
                 // 如果没有本地数据，再从数据库加载
                 try {
-                    const response = await fetch(`http://82.156.52.192:5000/api/wooden-fish/user/${this.userId}`);
+                    const response = await fetch(`/nav/api/wooden-fish/user/${this.userId}`);
                     if (response.ok) {
                         const userData = await response.json();
                         this.count = userData.count || 0;
@@ -372,7 +372,7 @@ class WoodenFishV2 {
         }
         
         try {
-            const response = await fetch('http://82.156.52.192:5000/api/wooden-fish/leaderboard');
+            const response = await fetch('/nav/api/wooden-fish/leaderboard');
             if (response.ok) {
                 const data = await response.json();
                 this.displayLeaderboard(data);

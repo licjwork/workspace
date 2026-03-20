@@ -51,7 +51,7 @@ async function loadSites() {
             params.append('session_token', currentUser.session_token);
         }
         
-        const response = await fetch(`/nav/api/sites?${params}`);
+        const response = await fetch(`http://82.156.52.192:5000/api/sites?${params}`);
         
         if (response.ok) {
             const data = await response.json();
@@ -209,7 +209,7 @@ async function toggleFavorite(siteId) {
     try {
         if (site.is_favorite) {
             // 取消收藏
-            const response = await fetch(`/nav/api/favorites/${siteId}?${params}`, {
+            const response = await fetch(`http://82.156.52.192:5000/api/favorites/${siteId}?${params}`, {
                 method: 'DELETE'
             });
             
@@ -221,7 +221,7 @@ async function toggleFavorite(siteId) {
             }
         } else {
             // 添加收藏
-            const response = await fetch('/nav/api/favorites', {
+            const response = await fetch('http://82.156.52.192:5000/api/favorites', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -250,7 +250,7 @@ async function toggleFavorite(siteId) {
 // 添加新网站
 async function addSite(siteData) {
     try {
-        const response = await fetch('/nav/api/sites', {
+        const response = await fetch('http://82.156.52.192:5000/api/sites', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -291,7 +291,7 @@ let newsSlides = [];
 // 加载最新资讯
 async function loadNews() {
     try {
-        const response = await fetch('/nav/api/news');
+        const response = await fetch('http://82.156.52.192:5000/api/news');
         
         if (response.ok) {
             const newsData = await response.json();
@@ -407,7 +407,7 @@ function checkLoginStatus() {
     const sessionToken = localStorage.getItem('session_token');
     if (sessionToken) {
         // 验证会话
-        fetch('/nav/api/auth/verify', {
+        fetch('http://82.156.52.192:5000/api/auth/verify', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -476,7 +476,7 @@ function login() {
         return;
     }
     
-    fetch('/nav/api/auth/login', {
+    fetch('http://82.156.52.192:5000/api/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -533,7 +533,7 @@ function register() {
         return;
     }
     
-    fetch('/nav/api/auth/register', {
+    fetch('http://82.156.52.192:5000/api/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -567,7 +567,7 @@ function logout() {
     const sessionToken = localStorage.getItem('session_token');
     
     if (sessionToken) {
-        fetch('/nav/api/auth/logout', {
+        fetch('http://82.156.52.192:5000/api/auth/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -649,7 +649,7 @@ function toggleFavorite(siteId) {
     
     if (site.is_favorite) {
         // 取消收藏
-        fetch(`/nav/api/favorites/${siteId}?${params}`, {
+        fetch(`http://82.156.52.192:5000/api/favorites/${siteId}?${params}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -661,7 +661,7 @@ function toggleFavorite(siteId) {
         .catch(error => console.error('取消收藏失败:', error));
     } else {
         // 添加收藏
-        fetch('/nav/api/favorites', {
+        fetch('http://82.156.52.192:5000/api/favorites', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

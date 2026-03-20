@@ -11,9 +11,45 @@
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 134-793-681
-39.144.1.128 - - [20/Mar/2026 09:00:02] "OPTIONS /api/auth/verify HTTP/1.1" 200 -
-39.144.1.128 - - [20/Mar/2026 09:00:02] "POST /api/auth/verify HTTP/1.1" 200 -
-39.144.1.128 - - [20/Mar/2026 09:00:22] "GET /api/news HTTP/1.1" 200 -
-39.144.1.128 - - [20/Mar/2026 09:00:22] "GET /api/sites HTTP/1.1" 200 -
-180.101.245.253 - - [20/Mar/2026 09:06:57] "GET /api/sites HTTP/1.1" 200 -
-59.83.208.108 - - [20/Mar/2026 09:09:34] "GET /api/news HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 12:50:30] "[33mHEAD / HTTP/1.0[0m" 404 -
+127.0.0.1 - - [20/Mar/2026 12:50:47] "[33mGET /sites HTTP/1.0[0m" 404 -
+127.0.0.1 - - [20/Mar/2026 12:50:53] "GET /api/sites HTTP/1.1" 200 -
+82.156.52.192 - - [20/Mar/2026 12:51:57] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:08:14] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:10:01] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:27:01] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:27:11] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:27:44] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:27:51] "GET /api/sites HTTP/1.1" 200 -
+219.141.248.148 - - [20/Mar/2026 13:36:05] "GET /api/news HTTP/1.1" 200 -
+219.141.248.148 - - [20/Mar/2026 13:36:05] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:38:44] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:25] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:25] "GET /api/news HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:41] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:41] "GET /api/sites?session_token=c618b0e5bc1f6e7a9a06053d6f1f2519 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:45] "GET /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:48] "GET /api/wooden-fish/leaderboard HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:56] "POST /api/auth/logout HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:57:56] "GET /api/sites HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:03] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:03] "GET /api/sites?session_token=84689843547b2db65a6663320fff859d HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:07] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:08] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:09] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:10] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:10] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:10] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:11] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:11] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:12] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:12] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:13] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:13] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:13] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:14] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:14] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:14] "POST /api/wooden-fish/user/2 HTTP/1.1" 200 -
+127.0.0.1 - - [20/Mar/2026 13:58:16] "GET /api/wooden-fish/leaderboard HTTP/1.1" 200 -
+193.32.162.19 - - [20/Mar/2026 14:16:52] code 400, message Bad request syntax ('SSH-2.0-Go')
+193.32.162.19 - - [20/Mar/2026 14:16:52] "[31m[1mSSH-2.0-Go[0m" 400 -
