@@ -1,13 +1,11 @@
 {
-  "last_update": "2026-03-20 10:36:13",
-  "content": "【翻译结果】Recent world news highlights include significant NBA games where Lakers 击败 Rockets 124-116, 随着 Luka Doncic scoring 40 points 和 LeBron James adding 30. Additionally, Thunder beat Nets 121-92, 和 Knicks secured 一个 136-110 victory over Pacers. Other notable games featured Cavaliers defeating Mavericks 138-105 和 Celtics overcoming Warriors 120-99.\n\n（部分专有名词保留英文，如需更准确翻译请提供更多上下文）",
+  "last_update": "2026-03-21 00:00:04",
+  "content": "Recent technology news highlights Musk's announcement of X Money launching in April, Microsoft's AI agents, and Google's Gemini AI expanding across Docs, Sheets, and Slides. Additionally, Amdocs discusses autonomous networks with agentic AI and real-time simulation at Mobile World Congress 2026. Alibaba's earnings report shows a profit decrease due to intense food-delivery competition, but the outlook for AI remains bright. China's high-tech manufacturing sector grew by 9.4% in 2025, with EV output surpassing 16 million units.",
   "news_list": [
     {
-      "title": "智能新闻推送",
-      "summary": "【翻译结果】Recent world news highlights include significant NBA games where Lakers 击败 Rockets 124-116, 随着"
+      "index": 1,
+      "title": "科技新闻速递",
+      "summary": "Recent technology news highlights Musk's announcement of X Money launching in April, Microsoft's AI agents, and Google's Gemini AI expanding across Docs, Sheets, and Slides. Additionally, Amdocs discusses autonomous networks with agentic AI and real-time simulation at Mobile World Congress 2026. Alibaba's earnings report shows a profit decrease due to intense food-delivery competition, but the outlook for AI remains bright. China's high-tech manufacturing sector grew by 9.4% in 2025, with EV output surpassing 16 million units."
     }
-  ],
-  "source": "Tavily AI搜索 + DeepSeek智能翻译",
-  "push_status": "success",
-  "push_time": "2026-03-20 10:36:13"
+  ]
 }

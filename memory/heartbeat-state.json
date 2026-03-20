@@ -1,0 +1,8 @@
+{
+  "last_check": "2026-03-20T22:51:00+08:00",
+  "services_status": {
+    "backend": "running",
+    "frontend": "running"
+  },
+  "next_backup": "2026-03-21T23:00:00+08:00"
+}
