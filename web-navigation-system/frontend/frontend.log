@@ -33,3 +33,4 @@
 代理请求: POST /wooden-fish/user/2
 代理请求: POST /wooden-fish/user/2
 代理请求: GET /wooden-fish/leaderboard
+代理请求: POST /auth/verify

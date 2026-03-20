@@ -53,3 +53,4 @@
 127.0.0.1 - - [20/Mar/2026 13:58:16] "GET /api/wooden-fish/leaderboard HTTP/1.1" 200 -
 193.32.162.19 - - [20/Mar/2026 14:16:52] code 400, message Bad request syntax ('SSH-2.0-Go')
 193.32.162.19 - - [20/Mar/2026 14:16:52] "[31m[1mSSH-2.0-Go[0m" 400 -
+127.0.0.1 - - [20/Mar/2026 14:28:27] "POST /api/auth/verify HTTP/1.1" 200 -
