@@ -1,11 +1,69 @@
 {
-  "last_update": "2026-03-21 00:00:04",
-  "content": "Recent technology news highlights Musk's announcement of X Money launching in April, Microsoft's AI agents, and Google's Gemini AI expanding across Docs, Sheets, and Slides. Additionally, Amdocs discusses autonomous networks with agentic AI and real-time simulation at Mobile World Congress 2026. Alibaba's earnings report shows a profit decrease due to intense food-delivery competition, but the outlook for AI remains bright. China's high-tech manufacturing sector grew by 9.4% in 2025, with EV output surpassing 16 million units.",
+  "last_update": "2026-03-22 00:09:42",
+  "content": "As of March 21, 2026, international news highlights include President Trump urging NATO and China to reopen the Strait of Hormuz amid ongoing conflict, with Trump stating that he does not need NATO's help in the war. Meanwhile, CNBC reports on the potential market impact of the Iran war, with experts predicting a 10%-15% market correction. Additionally, Trump officials have been noted for pressuring media outlets amid increased scrutiny of the war.",
   "news_list": [
     {
       "index": 1,
-      "title": "科技新闻速递",
-      "summary": "Recent technology news highlights Musk's announcement of X Money launching in April, Microsoft's AI agents, and Google's Gemini AI expanding across Docs, Sheets, and Slides. Additionally, Amdocs discusses autonomous networks with agentic AI and real-time simulation at Mobile World Congress 2026. Alibaba's earnings report shows a profit decrease due to intense food-delivery competition, but the outlook for AI remains bright. China's high-tech manufacturing sector grew by 9.4% in 2025, with EV output surpassing 16 million units."
+      "title": "Live updates: Trump presses NATO and China to reopen Strait of Hormuz as war enters Day 17",
+      "summary": "News Update – Market Close. CNBC brings you fast, accurate, and actionable business news and market updates. Israel PM Netanyahu: Iran has no capacity to enrich Uranium or make ballistic missiles. R...",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 2,
+      "title": "Post Market Wrap: March 19, 2026",
+      "summary": "News Update – Market Close. CNBC brings you fast, accurate, and actionable business news and market updates. Israel PM Netanyahu: Iran has no capacity to enrich Uranium or make ballistic missiles. R...",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 3,
+      "title": "The Late Morning Rundown: March 17, 2026",
+      "summary": "News Update – Late Morning. CNBC brings you fast, accurate, and actionable business news and market updates. President Trump on Iran war: 'We don't need help' from NATO allies. Watch CNBC's full int...",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 4,
+      "title": "The Pre-Market Rundown: March 17, 2026",
+      "summary": "News Update – Pre-Markets. CNBC brings you fast, accurate, and actionable business news and market updates. NEC Director Kevin Hassett: Tankers are starting to go through the Strait of Hormuz. Housi...",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 5,
+      "title": "Trump officials pressure media as war scrutiny intensifies",
+      "summary": "China’s Economy Shows Surprise Rebound Even as War Risks Spread. China’s main economic indicators fared better than forecast to start the year, in a sign that momentum was improving before the war i...",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 6,
+      "title": "China’s Economy Gets Off to Better-Than-Forecast Start to Year",
+      "summary": "China’s Economy Shows Surprise Rebound Even as War Risks Spread. China’s main economic indicators fared better than forecast to start the year, in a sign that momentum was improving before the war i...",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 7,
+      "title": "Tencent Posts Earnings Beat as It Steps Up AI Effort",
+      "summary": "8. Eight States Sue to Block $6.2 Billion Nexstar-Tegna Merger - WSJ",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 8,
+      "title": "Eight States Sue to Block $6.2 Billion Nexstar-Tegna Merger",
+      "summary": "9. Exclusive | Private Credit’s Investor Exodus Spreads to Consumer Loans - WSJ",
+      "keywords": [],
+      "key_data": []
+    },
+    {
+      "index": 9,
+      "title": "Exclusive | Private Credit’s Investor Exodus Spreads to Consumer Loans",
+      "summary": "10. The Unexpected Risk of Letting ChatGPT Fact-Check Your Financial Adviser - WSJ",
+      "keywords": [],
+      "key_data": []
     }
   ]
 }

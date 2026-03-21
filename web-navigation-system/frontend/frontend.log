@@ -3,33 +3,3 @@
 > node server.js
 
 前端服务器运行在 http://0.0.0.0:8017
-代理请求: GET /sites
-代理请求: GET /news
-代理请求: POST /auth/login
-代理请求: GET /sites?session_token=ed0e06141b50b97b98a6462e9d5048f9
-代理请求: GET /wooden-fish/user/2
-代理请求: POST /wooden-fish/user/2
-代理请求: POST /wooden-fish/user/2
-代理请求: POST /wooden-fish/user/2
-代理请求: GET /wooden-fish/leaderboard
-代理请求: POST /favorites
-代理请求: GET /sites?category=favorites&session_token=ed0e06141b50b97b98a6462e9d5048f9
-代理请求: POST /auth/logout
-代理请求: GET /sites?category=favorites
-代理请求: GET /news
-代理请求: GET /sites
-代理请求: GET /news
-代理请求: GET /news
-代理请求: GET /news
-代理请求: GET /news
-代理请求: GET /news
-代理请求: GET /news
-代理请求: GET /sites
-代理请求: GET /news
-代理请求: GET /sites
-代理请求: GET /news
-代理请求: GET /sites
-代理请求: GET /news
-代理请求: GET /sites
-代理请求: GET /news
-代理请求: GET /news

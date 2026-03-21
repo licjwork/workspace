@@ -42,6 +42,14 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 - 新闻搜索使用 --topic news
 - 普通搜索使用 --topic general
 
+### 狗蛋导航系统
+- **项目目录**: `/home/ubuntu/.openclaw/workspace/web-navigation-system/`
+- **启动命令**: `cd /home/ubuntu/.openclaw/workspace/web-navigation-system && ./start-all.sh`
+- **停止命令**: `cd /home/ubuntu/.openclaw/workspace/web-navigation-system && ./stop-all.sh`
+- **状态检查**: `cd /home/ubuntu/.openclaw/workspace/web-navigation-system && ./status.sh`
+- **前端访问**: http://82.156.52.192:8017
+- **后端API**: http://localhost:5000
+
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.

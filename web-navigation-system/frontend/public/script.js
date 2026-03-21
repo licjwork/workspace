@@ -316,16 +316,27 @@ async function loadNews() {
             
             // 添加详细新闻列表
             if (newsData.news_list && newsData.news_list.length > 0) {
-                newsData.news_list.forEach(news => {
+                // 最多显示10条详细新闻
+                const maxNews = Math.min(newsData.news_list.length, 10);
+                for (let i = 0; i < maxNews; i++) {
+                    const news = newsData.news_list[i];
                     const slide = document.createElement('div');
                     slide.className = 'news-slide';
                     slide.innerHTML = `
-                        <h4>${news.title || '新闻标题'}</h4>
+                        <h4>${i + 1}. ${news.title || '新闻标题'}</h4>
                         <p>${news.summary || '新闻摘要'}</p>
                     `;
                     newsSlidesContainer.appendChild(slide);
                     newsSlides.push(slide);
-                });
+                }
+                
+                // 显示新闻统计信息
+                const statsDiv = document.createElement('div');
+                statsDiv.className = 'news-stats';
+                statsDiv.innerHTML = `
+                    <p>共 ${newsData.news_list.length} 条新闻，显示 ${maxNews} 条</p>
+                `;
+                newsSlidesContainer.parentNode.appendChild(statsDiv);
             }
             
             // 如果没有新闻，显示等待信息
@@ -345,11 +356,36 @@ async function loadNews() {
                 newsUpdateTime.textContent = `最后更新: ${newsData.last_update}`;
             }
             
+            // 创建时间戳
+            if (newsData.last_update) {
+                newsUpdateTime.textContent = `最后更新: ${newsData.last_update}`;
+            } else {
+                newsUpdateTime.textContent = '最后更新: 未知时间';
+            }
+            
+            // 如果新闻太多，限制轮播显示数量（最多10条）
+            if (newsSlides.length > 10) {
+                newsSlides = newsSlides.slice(0, 10);
+            }
+            
             // 创建指示器
             createIndicators();
             
             // 显示第一张幻灯片
             showSlide(0);
+            
+            // 显示新闻统计信息
+            const totalStatsDiv = document.createElement('div');
+            totalStatsDiv.className = 'news-total-stats';
+            totalStatsDiv.innerHTML = `
+                <p>共 ${newsSlides.length} 个资讯页面</p>
+            `;
+            newsSlidesContainer.parentNode.appendChild(totalStatsDiv);
+            
+            // 自动轮播（如果有多个新闻）
+            if (newsSlides.length > 1) {
+                startAutoSlide();
+            }
         }
     } catch (error) {
         console.log('资讯加载失败，使用默认信息');
@@ -374,6 +410,38 @@ function createIndicators() {
         indicator.onclick = () => showSlide(i);
         indicatorsContainer.appendChild(indicator);
     }
+}
+
+// 自动轮播定时器
+let autoSlideTimer = null;
+
+// 开始自动轮播
+function startAutoSlide() {
+    if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+    }
+    
+    autoSlideTimer = setInterval(() => {
+        nextSlide();
+    }, 5000);  // 每5秒切换一次
+}
+
+// 停止自动轮播
+function stopAutoSlide() {
+    if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+        autoSlideTimer = null;
+    }
+}
+
+// 下一张幻灯片
+function nextSlide() {
+    showSlide((currentSlide + 1) % newsSlides.length);
+}
+
+// 上一张幻灯片
+function prevSlide() {
+    showSlide((currentSlide - 1 + newsSlides.length) % newsSlides.length);
 }
 
 // 显示指定幻灯片
