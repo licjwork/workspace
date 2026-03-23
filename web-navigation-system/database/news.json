@@ -1,69 +1,31 @@
 {
-  "last_update": "2026-03-22 00:09:42",
-  "content": "As of March 21, 2026, international news highlights include President Trump urging NATO and China to reopen the Strait of Hormuz amid ongoing conflict, with Trump stating that he does not need NATO's help in the war. Meanwhile, CNBC reports on the potential market impact of the Iran war, with experts predicting a 10%-15% market correction. Additionally, Trump officials have been noted for pressuring media outlets amid increased scrutiny of the war.",
   "news_list": [
     {
       "index": 1,
-      "title": "Live updates: Trump presses NATO and China to reopen Strait of Hormuz as war enters Day 17",
-      "summary": "News Update – Market Close. CNBC brings you fast, accurate, and actionable business news and market updates. Israel PM Netanyahu: Iran has no capacity to enrich Uranium or make ballistic missiles. R...",
-      "keywords": [],
-      "key_data": []
+      "title": "以色列总理称伊朗无核武能力",
+      "summary": "以色列总理内塔尼亚胡表示伊朗不具备铀浓缩或制造弹道导弹的能力，但前美国国安局局长海格认为彻底消除伊朗核能力极为困难。"
     },
     {
       "index": 2,
-      "title": "Post Market Wrap: March 19, 2026",
-      "summary": "News Update – Market Close. CNBC brings you fast, accurate, and actionable business news and market updates. Israel PM Netanyahu: Iran has no capacity to enrich Uranium or make ballistic missiles. R...",
-      "keywords": [],
-      "key_data": []
+      "title": "伊朗无视特朗普48小时通牒",
+      "summary": "尽管特朗普发出48小时最后期限并威胁摧毁能源设施，伊朗仍拒绝让步，地区紧张局势持续升级。"
     },
     {
       "index": 3,
-      "title": "The Late Morning Rundown: March 17, 2026",
-      "summary": "News Update – Late Morning. CNBC brings you fast, accurate, and actionable business news and market updates. President Trump on Iran war: 'We don't need help' from NATO allies. Watch CNBC's full int...",
-      "keywords": [],
-      "key_data": []
+      "title": "伊朗战争威胁推高全球油价",
+      "summary": "潜在伊朗冲突引发市场对石油供应中断的担忧，油价上涨已对全球经济构成压力，恐致市场回调10%-15%。"
     },
     {
       "index": 4,
-      "title": "The Pre-Market Rundown: March 17, 2026",
-      "summary": "News Update – Pre-Markets. CNBC brings you fast, accurate, and actionable business news and market updates. NEC Director Kevin Hassett: Tankers are starting to go through the Strait of Hormuz. Housi...",
-      "keywords": [],
-      "key_data": []
+      "title": "NASA局长谈阿尔忒弥斯二号任务",
+      "summary": "NASA局长贾里德·以撒曼介绍阿尔忒弥斯二号载人绕月飞行计划，并展望轨道经济发展前景。"
     },
     {
       "index": 5,
-      "title": "Trump officials pressure media as war scrutiny intensifies",
-      "summary": "China’s Economy Shows Surprise Rebound Even as War Risks Spread. China’s main economic indicators fared better than forecast to start the year, in a sign that momentum was improving before the war i...",
-      "keywords": [],
-      "key_data": []
-    },
-    {
-      "index": 6,
-      "title": "China’s Economy Gets Off to Better-Than-Forecast Start to Year",
-      "summary": "China’s Economy Shows Surprise Rebound Even as War Risks Spread. China’s main economic indicators fared better than forecast to start the year, in a sign that momentum was improving before the war i...",
-      "keywords": [],
-      "key_data": []
-    },
-    {
-      "index": 7,
-      "title": "Tencent Posts Earnings Beat as It Steps Up AI Effort",
-      "summary": "8. Eight States Sue to Block $6.2 Billion Nexstar-Tegna Merger - WSJ",
-      "keywords": [],
-      "key_data": []
-    },
-    {
-      "index": 8,
-      "title": "Eight States Sue to Block $6.2 Billion Nexstar-Tegna Merger",
-      "summary": "9. Exclusive | Private Credit’s Investor Exodus Spreads to Consumer Loans - WSJ",
-      "keywords": [],
-      "key_data": []
-    },
-    {
-      "index": 9,
-      "title": "Exclusive | Private Credit’s Investor Exodus Spreads to Consumer Loans",
-      "summary": "10. The Unexpected Risk of Letting ChatGPT Fact-Check Your Financial Adviser - WSJ",
-      "keywords": [],
-      "key_data": []
+      "title": "八州联合起诉阻止Nexstar收购Tegna",
+      "summary": "美国八个州因反垄断担忧，联合提起诉讼，试图阻止Nexstar以62亿美元收购地方广播公司Tegna的交易。"
     }
-  ]
+  ],
+  "last_update": "2026-03-23 11:36:05",
+  "content": "国际新闻摘要：以色列总理称伊朗无核武能力；伊朗无视特朗普48小时通牒；伊朗战争威胁推高全球油价。"
 }
