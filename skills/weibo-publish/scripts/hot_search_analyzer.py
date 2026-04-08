@@ -15,13 +15,72 @@ class HotSearchAnalyzer:
         """连接浏览器"""
         return self.publisher.connect_browser()
     
+    def _execute_js(self, script):
+        """执行JavaScript脚本"""
+        if not self.publisher.ws:
+            return None
+            
+        try:
+            self.publisher.message_id += 1
+            message = {
+                "id": self.publisher.message_id,
+                "method": "Runtime.evaluate",
+                "params": {
+                    "expression": script,
+                    "returnByValue": True
+                }
+            }
+            
+            self.publisher.ws.send(json.dumps(message))
+            response = self.publisher.ws.recv()
+            result = json.loads(response)
+            
+            if 'result' in result and 'result' in result['result']:
+                return result['result']['result'].get('value')
+            return None
+            
+        except Exception as e:
+            print(f"❌ JavaScript执行失败: {e}")
+            return None
+    
+    def _navigate_and_wait(self, url):
+        """导航到指定URL并等待加载"""
+        if not self.publisher.ws:
+            return False
+            
+        try:
+            self.publisher.message_id += 1
+            message = {
+                "id": self.publisher.message_id,
+                "method": "Page.navigate",
+                "params": {
+                    "url": url
+                }
+            }
+            
+            self.publisher.ws.send(json.dumps(message))
+            response = self.publisher.ws.recv()
+            
+            # 等待页面加载
+            time.sleep(3)
+            return True
+            
+        except Exception as e:
+            print(f"❌ 页面导航失败: {e}")
+            return False
+    
     def get_hot_search_topics(self, limit=10):
         """获取热搜话题列表"""
         try:
-            # 导航到热搜页面
+            # 连接浏览器
+            if not self.connect_browser():
+                return []
+            
             print("🔍 正在获取微博热搜...")
-            self.publisher.cdp.navigate("https://s.weibo.com/top/summary")
-            self.publisher.cdp.wait_load()
+            
+            # 导航到热搜页面
+            if not self._navigate_and_wait("https://s.weibo.com/top/summary"):
+                return []
             
             # 提取热搜话题
             script = """
@@ -38,13 +97,18 @@ class HotSearchAnalyzer:
                     });
                 }
             });
-            topics;
+            JSON.stringify(topics);
             """
             
-            topics = self.publisher.cdp.evaluate(script)
-            print(f"✅ 成功获取 {len(topics)} 个热搜话题")
-            return topics if topics else []
-            
+            result = self._execute_js(script)
+            if result:
+                topics = json.loads(result)
+                print(f"✅ 成功获取 {len(topics)} 个热搜话题")
+                return topics
+            else:
+                print("❌ 获取热搜数据失败")
+                return []
+                
         except Exception as e:
             print(f"❌ 获取热搜失败: {e}")
             return []
@@ -55,8 +119,8 @@ class HotSearchAnalyzer:
             print(f"🔍 正在获取话题评论: {topic_url}")
             
             # 导航到话题页面
-            self.publisher.cdp.navigate(topic_url)
-            self.publisher.cdp.wait_load()
+            if not self._navigate_and_wait(topic_url):
+                return []
             
             # 等待评论加载
             time.sleep(3)
@@ -73,13 +137,18 @@ class HotSearchAnalyzer:
                     });
                 }
             });
-            comments;
+            JSON.stringify(comments);
             """
             
-            comments = self.publisher.cdp.evaluate(script)
-            print(f"✅ 成功获取 {len(comments)} 条评论")
-            return comments if comments else []
-            
+            result = self._execute_js(script)
+            if result:
+                comments = json.loads(result)
+                print(f"✅ 成功获取 {len(comments)} 条评论")
+                return comments
+            else:
+                print("❌ 获取评论数据失败")
+                return []
+                
         except Exception as e:
             print(f"❌ 获取评论失败: {e}")
             return []
@@ -133,22 +202,3 @@ class HotSearchAnalyzer:
                 contexts.append(context)
         
         return contexts if contexts else ["社会热点"]
-
-if __name__ == "__main__":
-    analyzer = HotSearchAnalyzer()
-    
-    if analyzer.connect_browser():
-        # 测试获取热搜
-        topics = analyzer.get_hot_search_topics()
-        print("\n📊 热搜话题:")
-        for topic in topics[:5]:
-            print(f"   {topic['rank']}. {topic['title']}")
-        
-        # 测试获取评论
-        if topics:
-            comments = analyzer.get_topic_comments(topics[0]['link'])
-            print(f"\n💬 热门评论:")
-            for comment in comments[:3]:
-                print(f"   • {comment['text'][:50]}...")
-    else:
-        print("❌ 浏览器连接失败")

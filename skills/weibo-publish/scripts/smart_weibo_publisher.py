@@ -4,9 +4,9 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from weibo_publisher import WeiboPublisher
-from content_validator_fixed import validate_content, preview_content
+from content_validator import validate_content, preview_content
 from duplicate_checker import DuplicateChecker
-from smart_content_generator_natural import SmartContentGenerator
+from smart_content_generator import SmartContentGenerator
 
 class SmartWeiboPublisher:
     def __init__(self):

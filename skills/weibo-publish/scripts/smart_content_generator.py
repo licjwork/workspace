@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from hot_search_analyzer_fixed import HotSearchAnalyzer
+from hot_search_analyzer import HotSearchAnalyzer
 
 class SmartContentGenerator:
     def __init__(self):
@@ -85,22 +85,53 @@ class SmartContentGenerator:
         words2 = set(topic2.replace("，", " ").replace("。", " ").split())
         
         common_words = words1.intersection(words2)
-        similarity = len(common_words) / max(len(words1), len(words2))
+        similarity = len(common_words) / max(len(words1), len(words2)) if max(len(words1), len(words2)) > 0 else 0
         
         return similarity > 0.3
+    
+    def _extract_comment_insights(self, comments):
+        """从评论中提取观点洞察"""
+        if not comments:
+            return []
+        
+        insights = []
+        
+        # 分析评论内容，提取关键观点
+        for comment in comments[:3]:  # 取前3条评论
+            text = comment.get('text', '')
+            
+            # 提取一些常见的观点模式
+            if "支持" in text or "赞同" in text or "同意" in text:
+                insights.append("有人表示支持和赞同")
+            elif "反对" in text or "质疑" in text or "不认同" in text:
+                insights.append("也有人提出质疑和反对")
+            elif "理解" in text or "能懂" in text or "明白" in text:
+                insights.append("不少人表示能够理解")
+            elif "不理解" in text or "不懂" in text or "奇怪" in text:
+                insights.append("也有人表示不太理解")
+            elif "建议" in text or "应该" in text or "希望" in text:
+                insights.append("大家给出了各种建议")
+            elif "经历" in text or "遇到" in text or "亲身" in text:
+                insights.append("有人分享了类似经历")
+        
+        # 去重
+        return list(set(insights))
     
     def _generate_content_with_analysis(self, topic, comments, sentiment, contexts, is_hot=False):
         """基于分析结果生成内容"""
         
+        # 提取评论洞察
+        insights = self._extract_comment_insights(comments)
+        
         # 根据情感倾向调整语气
         if sentiment == "正面":
-            sentiment_phrase = "看起来大家对这个话题还是比较认可的"
+            sentiment_phrase = "从网上的讨论来看，大多数人还是比较认可这个观点的"
             reaction = "👍"
         elif sentiment == "负面":
-            sentiment_phrase = "不过网上也有不少质疑的声音"
+            sentiment_phrase = "不过从讨论中也能看出，有不少人持保留态度"
             reaction = "🤔"
         else:
-            sentiment_phrase = "大家的看法各不相同"
+            sentiment_phrase = "大家的看法比较多元，各有各的观点"
             reaction = "💭"
         
         # 根据是否热搜调整标题
@@ -109,18 +140,15 @@ class SmartContentGenerator:
         else:
             title = f"🔥 {topic}这个话题你怎么看？"
         
-        # 构建评论摘要
-        comment_summary = ""
-        if comments:
-            sample_comments = comments[:2]  # 取前2条评论作为样本
-            comment_texts = []
-            for comment in sample_comments:
-                text = comment.get('text', '')[:30]  # 截取前30字
-                if text:
-                    comment_texts.append(f"\"...{text}...\"")
-            
-            if comment_texts:
-                comment_summary = f"\n\n看到网上有人评论：{', '.join(comment_texts)}"
+        # 构建洞察内容
+        insight_text = ""
+        if insights:
+            # 随机选择1-2个洞察点
+            selected_insights = insights[:2]
+            if len(selected_insights) == 1:
+                insight_text = f"\n\n{selected_insights[0]}，这确实值得我们深入思考。"
+            else:
+                insight_text = f"\n\n{selected_insights[0]}，同时{selected_insights[1]}，这确实值得我们深入思考。"
         
         # 生成完整内容
         content = f"""
@@ -128,26 +156,11 @@ class SmartContentGenerator:
 
 说实话，{topic}这个话题确实很有意思。{sentiment_phrase}{reaction}
 
-从{', '.join(contexts[:2])}的角度来看，这个现象反映了当下的一些现实情况。{comment_summary}
+从{', '.join(contexts[:2])}的角度来看，这个现象反映了当下的一些现实情况。{insight_text}
 
 我觉得每个话题都有不同的角度可以思考，重要的是保持理性讨论的态度。大家都是从自己的经历和立场出发，有不同的看法很正常。
 
-你们对这个话题有什么想法？欢迎在评论区分享你的观点！#热点话题 #理性讨论 #社会观察
+你们对{topic}这个话题有什么想法？欢迎在评论区分享你的观点！#热点话题 #理性讨论 #社会观察
 """
         
         return content.strip()
-
-if __name__ == "__main__":
-    generator = SmartContentGenerator()
-    
-    # 测试生成指定话题内容
-    content, status = generator.generate_real_hot_search_content("12人花30万买月薪2500的高铁工作")
-    if content:
-        print(f"\n📝 生成状态: {status}")
-        print(f"📊 内容长度: {len(content)} 字")
-        print("\n📄 生成内容:")
-        print("-" * 50)
-        print(content)
-        print("-" * 50)
-    else:
-        print(f"❌ 生成失败: {status}")

@@ -11,9 +11,30 @@ def validate_content(content, topic):
     elif len(content) > 350:
         warnings.append("内容可能过长，建议控制在350字以内")
     
-    # 检查是否包含话题
-    if topic not in content:
-        errors.append(f"内容中未包含指定话题: {topic}")
+    # 检查是否包含话题（更灵活的匹配）
+    # 提取话题关键词进行匹配
+    topic_keywords = set(topic.replace("，", "").replace("。", "").replace("！", "").replace("？", "").split())
+    content_lower = content.lower()
+    
+    # 检查是否有足够的话题关键词在内容中
+    matched_keywords = 0
+    for keyword in topic_keywords:
+        if keyword and keyword in content:
+            matched_keywords += 1
+    
+    if matched_keywords < len(topic_keywords) * 0.5:  # 至少匹配50%的关键词
+        # 尝试更宽松的匹配：检查话题是否在内容中出现（部分匹配）
+        if topic not in content and len(topic) > 5:
+            # 检查是否有话题的子串在内容中
+            found_substring = False
+            for i in range(len(topic)-3):
+                substring = topic[i:i+4]
+                if substring in content:
+                    found_substring = True
+                    break
+            
+            if not found_substring:
+                errors.append(f"内容中未包含指定话题: {topic[:20]}...")
     
     # 检查是否包含必要元素
     required_elements = ["🔥", "\n", "#"]
@@ -29,7 +50,7 @@ def validate_content(content, topic):
         warnings.append("话题标签过多，建议控制在2-4个")
     
     # 检查是否包含互动元素
-    interaction_words = ["你怎么看", "欢迎分享", "一起来聊", "分享经验"]
+    interaction_words = ["你怎么看", "欢迎分享", "一起来聊", "分享经验", "有什么想法"]
     has_interaction = any(word in content for word in interaction_words)
     if not has_interaction:
         warnings.append("建议添加互动性语言，鼓励用户参与讨论")
@@ -58,21 +79,3 @@ def preview_content(content, topic):
     print(content)
     print("-" * 30)
     print("="*50)
-
-if __name__ == "__main__":
-    # 测试验证功能
-    test_content = """
-🔥 12人花30万买月薪2500的高铁工作这个选择真的值得吗？
-
-说实话，看到这个新闻我第一反应是：这些人是不是疯了？30万块钱干什么不好，非要买个2500的工作？
-
-但是仔细想想，可能每个人都有不同的处境和考虑。也许对有些人来说，稳定的工作比钱更重要？
-
-不过我还是觉得，30万的本金去做点什么小生意，或者投资自己学习新技能，回报可能都比这个高吧？
-
-你们怎么看这种选择？欢迎分享你的观点！#职场观察 #就业选择 #生活决策
-"""
-    
-    result = validate_content(test_content, "12人花30万买月薪2500的高铁工作")
-    print("验证结果:", result)
-    preview_content(test_content, "12人花30万买月薪2500的高铁工作")
