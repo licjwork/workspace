@@ -149,7 +149,7 @@ header {
 }
 
 .news-widget {
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.95);
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 30px;
@@ -161,24 +161,31 @@ header {
     color: #333;
     margin-bottom: 15px;
     font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .news-content {
-    color: #555;
+    color: #444;
     line-height: 1.6;
     margin-bottom: 10px;
     font-size: 0.95rem;
+    text-align: justify;
 }
 
 .news-update-time {
     color: #888;
     font-size: 0.85rem;
     text-align: right;
+    margin-top: 10px;
+    font-style: italic;
 }
 
 .news-slider {
     position: relative;
     overflow: hidden;
+    background: rgba(255,255,255,0.7);
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .news-slides {
@@ -188,22 +195,27 @@ header {
 
 .news-slide {
     min-width: 100%;
-    padding: 15px;
-    background: rgba(255,255,255,0.8);
+    padding: 20px;
+    background: rgba(255,255,255,0.9);
     border-radius: 10px;
-    margin-bottom: 10px;
+    box-sizing: border-box;
 }
 
 .news-slide h4 {
-    color: #333;
-    margin-bottom: 8px;
-    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
 }
 
-.news-slide p {
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.4;
+.news-slide .news-content {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: justify;
 }
 
 .news-controls {

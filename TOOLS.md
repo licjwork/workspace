@@ -53,3 +53,48 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+### 微博发布系统
+- **VNC显示**: :1 (端口5901)
+- **浏览器调试端口**: 18800
+- **浏览器路径**: /snap/bin/chromium
+- **发布页面**: https://m.weibo.cn/compose
+- **文本框选择器**: `textarea[placeholder*="分享新鲜事"]`
+- **发布按钮选择器**: `a.m-send-btn`
+
+#### 启动命令
+```bash
+# 启动VNC
+vncserver :1 -geometry 1280x800 -depth 24
+xhost +
+
+# 启动浏览器
+DISPLAY=:1 /snap/bin/chromium --no-sandbox --remote-debugging-port=18800 --remote-allow-origins=* --disable-gpu --no-first-run --disable-default-apps https://m.weibo.cn/compose
+```
+
+#### CDP连接
+```python
+import requests
+import websocket
+import json
+
+# 获取WebSocket URL
+response = requests.get('http://localhost:18800/json/list')
+page_info = response.json()[0]
+ws_url = page_info['webSocketDebuggerUrl']
+
+# 建立连接
+ws = websocket.create_connection(ws_url)
+
+# 发送CDP命令
+message = {
+    "id": 1,
+    "method": "Runtime.evaluate",
+    "params": {
+        "expression": "your_javascript_code",
+        "returnByValue": True
+    }
+}
+ws.send(json.dumps(message))
+response = ws.recv()
+```

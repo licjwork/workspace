@@ -24,6 +24,38 @@
     "find-skills": {
       "version": "0.1.0",
       "installedAt": 1773359441785
+    },
+    "image-gen-skill": {
+      "version": "0.1.0",
+      "installedAt": 1774622374118
+    },
+    "ai-image-gen": {
+      "version": "1.1.0",
+      "installedAt": 1774622828777
+    },
+    "comfy-skill": {
+      "version": "1.0.0",
+      "installedAt": 1774623016923
+    },
+    "stable-diffusion": {
+      "version": "1.0.0",
+      "installedAt": 1774623740181
+    },
+    "hf-sdxl-image": {
+      "version": "1.0.0",
+      "installedAt": 1774623754816
+    },
+    "xiaohongshu-all-in-one": {
+      "version": "2.0.0",
+      "installedAt": 1774693284977
+    },
+    "agent-browser-clawdbot": {
+      "version": "0.1.0",
+      "installedAt": 1775554465503
+    },
+    "weibo-publish": {
+      "version": "1.0.0",
+      "installedAt": 1775562603884
     }
   }
 }

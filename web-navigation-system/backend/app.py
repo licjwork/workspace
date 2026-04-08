@@ -599,7 +599,7 @@ def get_site_health(site_id):
 # 获取最新资讯
 @app.route('/api/news', methods=['GET'])
 def get_news():
-    news_file = '/home/ubuntu/.openclaw/workspace/web-navigation-system/database/news.json'
+    news_file = '/home/ubuntu/.openclaw/workspace/web-navigation-system/backend/news.json'
     
     # 如果news.json文件存在，读取它
     if os.path.exists(news_file):

@@ -5,6 +5,12 @@ const axios = require('axios');
 const app = express();
 const PORT = 8017;
 
+// 请求日志中间件
+app.use((req, res, next) => {
+    console.log(`收到请求: ${req.method} ${req.url} from ${req.ip}`);
+    next();
+});
+
 // CORS支持 - 解决移动端访问问题（必须在静态文件服务之前）
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -27,35 +33,71 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', express.static(path.join(__dirname, '../admin')));
 
-// API代理到后端
-app.use('/api', async (req, res) => {
-    try {
-        console.log(`代理请求: ${req.method} ${req.url}`);
-        
-        // 构建请求头，传递所有原始请求头
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-        
-        // 传递X-Session-Token头（关键修复）
-        if (req.headers['x-session-token']) {
-            headers['X-Session-Token'] = req.headers['x-session-token'];
+// API代理到后端 - 使用原生HTTP模块
+app.use('/api', (req, res) => {
+    console.log(`代理请求: ${req.method} ${req.url}`);
+    console.log('请求头:', JSON.stringify(req.headers, null, 2));
+    
+    // 处理OPTIONS预检请求
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, X-Session-Token');
+        res.status(200).end();
+        return;
+    }
+    
+    const http = require('http');
+    const options = {
+        hostname: 'xiaoliyaooo.ltd',
+        port: 80,
+        path: `/api${req.url}`,
+        method: req.method,
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Frontend-Server',
+            'Host': 'xiaoliyaooo.ltd'
         }
-        
-        const response = await axios({
-            method: req.method,
-            url: `http://localhost:5000/api${req.url}`,
-            data: req.body,
-            headers: headers
+    };
+    
+    console.log('代理选项:', JSON.stringify(options, null, 2));
+    
+    // 传递X-Session-Token头
+    if (req.headers['x-session-token']) {
+        options.headers['X-Session-Token'] = req.headers['x-session-token'];
+    }
+    
+    const proxyReq = http.request(options, (proxyRes) => {
+        console.log('收到后端响应，状态码:', proxyRes.statusCode);
+        let data = '';
+        proxyRes.on('data', (chunk) => {
+            data += chunk;
         });
-        res.status(response.status).json(response.data);
-    } catch (error) {
-        console.error('代理错误:', error.message);
+        proxyRes.on('end', () => {
+            console.log('响应数据长度:', data.length);
+            res.status(proxyRes.statusCode).json(JSON.parse(data));
+        });
+    });
+    
+    proxyReq.on('error', (err) => {
+        console.error('代理错误详情:', {
+            message: err.message,
+            code: err.code,
+            stack: err.stack
+        });
         res.status(500).json({ 
             error: '后端服务连接失败',
-            details: error.message 
+            details: err.message 
         });
+    });
+    
+    // 如果有请求体，发送给后端
+    if (req.body) {
+        console.log('发送请求体，长度:', JSON.stringify(req.body).length);
+        proxyReq.write(JSON.stringify(req.body));
     }
+    
+    proxyReq.end();
 });
 
 // 首页路由

@@ -11,11 +11,4 @@
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 134-793-681
-66.132.172.96 - - [22/Mar/2026 00:50:00] code 400, message Bad request version ('À\x14À')
-66.132.172.96 - - [22/Mar/2026 00:50:00] "[31m[1m\x16\x03\x01\x00î\x01\x00\x00ê\x03\x03\x9e\x8fþpã\x00ô-».x¯7qÑ\x0c}x\x81ü»heJ\x85j¹b\x16 \x1dK té\x94\x90Ît*\x08³öåfj\x19O\x1dã+Ó=>¨qu\x1fè\x0eÄ#IcY\x00&Ì¨Ì©À/À0À+À,À\x13À\x09À\x14À[0m" 400 -
-66.132.172.96 - - [22/Mar/2026 00:50:02] "[33mGET / HTTP/1.1[0m" 404 -
-66.132.172.96 - - [22/Mar/2026 00:50:04] code 505, message Invalid HTTP version (2.0)
-66.132.172.96 - - [22/Mar/2026 00:50:04] "[35m[1mPRI * HTTP/2.0[0m" 505 -
-66.132.172.96 - - [22/Mar/2026 00:52:28] code 400, message Bad request version ('\x04/\x8c¿Zª¡ï\x9aÿ\x0fÓ¯9º')
-66.132.172.96 - - [22/Mar/2026 00:52:28] "[31m[1m\x16\x03\x01\x00î\x01\x00\x00ê\x03\x03\x9b\x06[ç\x04Nä\x07\x97Ý\x1eû\x19ðv\x87ô\x9bäcù6³n\x17©\x8by|\x02B@ "\x14õSÁ\x17;\x85ÕB!\x00\x0d\x04/\x8c¿Zª¡ï\x9aÿ\x0fÓ¯9º[0m" 400 -
-66.132.172.96 - - [22/Mar/2026 00:52:37] "[33mGET /robots.txt HTTP/1.1[0m" 404 -
+127.0.0.1 - - [07/Apr/2026 16:26:05] "[33mPOST /api/publish HTTP/1.1[0m" 404 -

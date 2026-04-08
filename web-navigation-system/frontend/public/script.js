@@ -301,42 +301,39 @@ async function loadNews() {
             
             // 清空现有内容
             newsSlidesContainer.innerHTML = '';
+            newsSlides = [];
             
             // 添加主要新闻摘要
             if (newsData.content && newsData.content !== '暂无资讯') {
                 const mainSlide = document.createElement('div');
                 mainSlide.className = 'news-slide';
                 mainSlide.innerHTML = `
-                    <h4>📰 今日要闻</h4>
-                    <p>${newsData.content}</p>
+                    <h4>📰 国际新闻要点</h4>
+                    <div class="news-content">${newsData.content}</div>
                 `;
                 newsSlidesContainer.appendChild(mainSlide);
                 newsSlides.push(mainSlide);
             }
             
-            // 添加详细新闻列表
+            // 添加详细新闻列表 - 按照news_translation.md格式
             if (newsData.news_list && newsData.news_list.length > 0) {
                 // 最多显示10条详细新闻
                 const maxNews = Math.min(newsData.news_list.length, 10);
+                
                 for (let i = 0; i < maxNews; i++) {
                     const news = newsData.news_list[i];
                     const slide = document.createElement('div');
                     slide.className = 'news-slide';
+                    
+                    // 格式化显示：序号. 标题
+                    // 摘要内容
                     slide.innerHTML = `
-                        <h4>${i + 1}. ${news.title || '新闻标题'}</h4>
-                        <p>${news.summary || '新闻摘要'}</p>
+                        <h4>${news.index || (i + 1)}. ${news.title || '新闻标题'}</h4>
+                        <div class="news-content">${news.summary || '新闻摘要'}</div>
                     `;
                     newsSlidesContainer.appendChild(slide);
                     newsSlides.push(slide);
                 }
-                
-                // 显示新闻统计信息
-                const statsDiv = document.createElement('div');
-                statsDiv.className = 'news-stats';
-                statsDiv.innerHTML = `
-                    <p>共 ${newsData.news_list.length} 条新闻，显示 ${maxNews} 条</p>
-                `;
-                newsSlidesContainer.parentNode.appendChild(statsDiv);
             }
             
             // 如果没有新闻，显示等待信息
@@ -345,18 +342,13 @@ async function loadNews() {
                 waitSlide.className = 'news-slide';
                 waitSlide.innerHTML = `
                     <h4>📰 等待新闻更新</h4>
-                    <p>每日08:00自动推送最新资讯</p>
+                    <div class="news-content">每日偶数小时自动推送国际最新新闻</div>
                 `;
                 newsSlidesContainer.appendChild(waitSlide);
                 newsSlides.push(waitSlide);
             }
             
-            // 更新时间和指示器
-            if (newsData.last_update) {
-                newsUpdateTime.textContent = `最后更新: ${newsData.last_update}`;
-            }
-            
-            // 创建时间戳
+            // 更新时间
             if (newsData.last_update) {
                 newsUpdateTime.textContent = `最后更新: ${newsData.last_update}`;
             } else {
@@ -374,14 +366,6 @@ async function loadNews() {
             // 显示第一张幻灯片
             showSlide(0);
             
-            // 显示新闻统计信息
-            const totalStatsDiv = document.createElement('div');
-            totalStatsDiv.className = 'news-total-stats';
-            totalStatsDiv.innerHTML = `
-                <p>共 ${newsSlides.length} 个资讯页面</p>
-            `;
-            newsSlidesContainer.parentNode.appendChild(totalStatsDiv);
-            
             // 自动轮播（如果有多个新闻）
             if (newsSlides.length > 1) {
                 startAutoSlide();
@@ -393,7 +377,7 @@ async function loadNews() {
         newsSlidesContainer.innerHTML = `
             <div class="news-slide">
                 <h4>📰 资讯服务暂时不可用</h4>
-                <p>请稍后再试</p>
+                <div class="news-content">请稍后再试</div>
             </div>
         `;
     }
@@ -423,7 +407,7 @@ function startAutoSlide() {
     
     autoSlideTimer = setInterval(() => {
         nextSlide();
-    }, 5000);  // 每5秒切换一次
+    }, 8000);  // 每8秒切换一次
 }
 
 // 停止自动轮播
