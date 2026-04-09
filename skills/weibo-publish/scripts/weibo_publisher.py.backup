@@ -7,7 +7,6 @@ import json
 import websocket
 import time
 import requests
-import sys
 from datetime import datetime
 
 class WeiboPublisher:
@@ -26,40 +25,6 @@ class WeiboPublisher:
             return True
         except Exception as e:
             print(f"❌ Browser connection failed: {e}")
-            return False
-            
-    def navigate_to_compose(self):
-        """Navigate to compose page"""
-        if not self.ws:
-            return False
-            
-        self.message_id += 1
-        
-        script = '''
-        (function() {
-            if (window.location.href !== 'https://m.weibo.cn/compose') {
-                window.location.href = 'https://m.weibo.cn/compose';
-            }
-            return {navigated: true};
-        })();
-        '''
-        
-        message = {
-            'id': self.message_id,
-            'method': 'Runtime.evaluate',
-            'params': {
-                'expression': script,
-                'returnByValue': True
-            }
-        }
-        
-        try:
-            self.ws.send(json.dumps(message))
-            response = self.ws.recv()
-            result = json.loads(response)
-            return True
-        except Exception as e:
-            print(f"❌ Navigation failed: {e}")
             return False
             
     def input_content(self, content):
@@ -101,7 +66,7 @@ class WeiboPublisher:
             result = json.loads(response)
             return result.get('result', {}).get('result', {}).get('value', {}).get('inputSuccess', False)
         except Exception as e:
-            print(f"❌ Content input failed: {e}")
+            print(f"❌ Input content failed: {e}")
             return False
             
     def click_publish(self):
@@ -160,38 +125,52 @@ class WeiboPublisher:
         try:
             # Navigate to compose page
             print("1. Navigating to compose page...")
-            if not self.navigate_to_compose():
-                print("❌ Navigation failed")
-                return False
-                
-            # Wait for page load
-            time.sleep(2)
+            self.message_id += 1
+            
+            script = '''
+            (function() {
+                if (window.location.href !== 'https://m.weibo.cn/compose') {
+                    window.location.href = 'https://m.weibo.cn/compose';
+                }
+                return {navigated: true};
+            })();
+            '''
+            
+            message = {
+                'id': self.message_id,
+                'method': 'Runtime.evaluate',
+                'params': {
+                    'expression': script,
+                    'returnByValue': True
+                }
+            }
+            
+            self.ws.send(json.dumps(message))
+            self.ws.recv()
+            time.sleep(3)
             
             # Input content
             print("2. Inputting content...")
             if not self.input_content(content):
-                print("❌ Content input failed")
+                print("❌ Failed to input content")
                 return False
             print("   ✅ Content input successful")
             
-            # Wait a moment
-            time.sleep(1)
+            time.sleep(2)
             
             # Click publish
             print("3. Clicking publish button...")
             if not self.click_publish():
-                print("❌ Publish click failed")
+                print("❌ Failed to click publish button")
                 return False
             print("   ✅ Publish button clicked")
             
-            # Wait for publish
-            time.sleep(2)
-            
-            # Verify
+            # Verify publish
+            time.sleep(3)
             print("4. Verifying publish...")
-            self.message_id += 1
             
-            verify_script = '''
+            self.message_id += 1
+            script = '''
             (function() {
                 return {
                     url: window.location.href,
@@ -204,7 +183,7 @@ class WeiboPublisher:
                 'id': self.message_id,
                 'method': 'Runtime.evaluate',
                 'params': {
-                    'expression': verify_script,
+                    'expression': script,
                     'returnByValue': True
                 }
             }
@@ -233,14 +212,8 @@ class WeiboPublisher:
 
 if __name__ == "__main__":
     publisher = WeiboPublisher()
-    
-    # Check if content is provided as command line argument
-    if len(sys.argv) > 1:
-        content = sys.argv[1]
-    else:
-        content = f"测试微博发布 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-    
-    success = publisher.publish_weibo(content)
+    test_content = f"测试微博发布 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    success = publisher.publish_weibo(test_content)
     
     if success:
         print("✅ Publish successful!")
