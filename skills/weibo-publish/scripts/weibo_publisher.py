@@ -22,7 +22,7 @@ class WeiboPublisher:
             response = requests.get(f'http://localhost:{self.cdp_port}/json/list')
             page_info = response.json()[0]
             ws_url = page_info['webSocketDebuggerUrl']
-            self.ws = websocket.create_connection(ws_url)
+            self.ws = websocket.create_connection(ws_url, timeout=10)
             return True
         except Exception as e:
             print(f"❌ Browser connection failed: {e}")

@@ -30,7 +30,7 @@ class WeiboPublisher:
     def check_vnc_running(self):
         """检查VNC服务是否运行"""
         try:
-            result = subprocess.run(['ps', 'aux'], capture_output=True, text=True)
+            result = subprocess.run(['ps', 'aux'], capture_output=True, timeout=30, text=True)
             return 'vncserver' in result.stdout and self.vnc_display in result.stdout
         except:
             return False
@@ -49,19 +49,19 @@ class WeiboPublisher:
         try:
             # 先清理可能存在的旧会话
             subprocess.run(['vncserver', '-kill', self.vnc_display], 
-                         capture_output=True)
+                         capture_output=True, timeout=30)
             
             # 启动新的VNC会话
             result = subprocess.run([
                 'vncserver', self.vnc_display, 
                 '-geometry', '1280x800', 
                 '-depth', '24'
-            ], capture_output=True, text=True)
+            ], capture_output=True, timeout=30, text=True)
             
             if result.returncode == 0:
                 print("✅ VNC服务器启动成功")
                 # 允许所有主机连接
-                subprocess.run(['xhost', '+'], capture_output=True)
+                subprocess.run(['xhost', '+'], capture_output=True, timeout=30)
                 return True
             else:
                 print(f"❌ VNC启动失败: {result.stderr}")
@@ -318,7 +318,7 @@ class WeiboPublisher:
             ws_url = page_info['webSocketDebuggerUrl']
             
             import websocket
-            ws = websocket.create_connection(ws_url)
+            ws = websocket.create_connection(ws_url, timeout=10)
             
             # 输入内容
             input_script = f"""

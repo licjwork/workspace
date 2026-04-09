@@ -28,7 +28,7 @@ def test_weibo_publish():
         
         # 2. 建立WebSocket连接
         print("2. 建立WebSocket连接...")
-        ws = websocket.create_connection(ws_url)
+        ws = websocket.create_connection(ws_url, timeout=10)
         print("   ✅ WebSocket连接成功")
         
         message_id = 1
