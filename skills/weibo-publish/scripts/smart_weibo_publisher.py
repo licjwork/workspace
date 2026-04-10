@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-最终修复版智能微博发布器
+修复版智能微博发布器 - 正确版本
 """
 
 import os
@@ -49,30 +49,32 @@ class WeiboPublisher:
             return f"🔥 # {topic} # ：深度见解正在路上的狗蛋狗狗🐕建议大家保持关注！ #今日热点"
     
     def publish_weibo(self, content):
-        """发布微博"""
+        """发布微博内容"""
         print("🚀 正在发布微博...")
         
         try:
-            # 获取浏览器连接
-            response = requests.get(f'http://localhost:{self.browser_port}/json/list', timeout=5)
+            # 获取WebSocket URL
+            response = requests.get(f'http://localhost:{self.browser_port}/json/list')
             page_info = response.json()[0]
             ws_url = page_info['webSocketDebuggerUrl']
             
-            ws = websocket.create_connection(ws_url, timeout=10)
+            # 建立连接
+            ws = websocket.create_connection(ws_url)
             
-            # 分步执行：先输入内容，再发布
+            # 1. 输入内容 - 使用简单直接的JavaScript
+            # 转义内容中的引号和特殊字符
+            escaped_content = content.replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r')
             
-            # 1. 输入内容到文本框
-            input_js = '''
-                (function() {
-                    var textarea = document.querySelector('textarea[placeholder=\"分享新鲜事…\"]');
-                    if (textarea) {
-                        textarea.value = arguments[0];
-                        textarea.dispatchEvent(new Event('input', {bubbles: true}));
-                        return true;
-                    }
+            input_js = f'''
+                (function() {{
+                    var textarea = document.querySelector('textarea[placeholder*="分享新鲜事"]');
+                    if (textarea) {{
+                        textarea.value = "{escaped_content}";
+                        textarea.dispatchEvent(new Event('input', {{bubbles: true}}));
+                        return textarea.value.length > 0;
+                    }}
                     return false;
-                })();
+                }})();
             '''
             
             input_message = {
@@ -80,7 +82,6 @@ class WeiboPublisher:
                 'method': 'Runtime.evaluate',
                 'params': {
                     'expression': input_js,
-                    'arguments': [{'type': 'string', 'value': content}],
                     'returnByValue': True
                 }
             }
@@ -88,6 +89,10 @@ class WeiboPublisher:
             ws.send(json.dumps(input_message))
             input_result = ws.recv()
             input_data = json.loads(input_result)
+            
+            # 调试信息
+            print(f"输入响应: {input_data}")
+            
             input_success = input_data.get('result', {}).get('result', {}).get('value', False)
             
             if not input_success:
@@ -123,6 +128,10 @@ class WeiboPublisher:
             ws.send(json.dumps(publish_message))
             publish_result = ws.recv()
             publish_data = json.loads(publish_result)
+            
+            # 调试信息
+            print(f"发布响应: {publish_data}")
+            
             publish_success = publish_data.get('result', {}).get('result', {}).get('value', False)
             
             ws.close()
@@ -138,53 +147,35 @@ class WeiboPublisher:
             print(f"❌ 发布过程出错: {e}")
             return False
     
-    def run(self, topic=None, preview=False):
-        """运行发布流程"""
+    def run(self, topic="今日热点"):
+        """运行微博发布"""
         print("🚀 启动微博发布系统")
         
-        # 处理话题
-        if not topic:
-            topic = "今日热点"
-        
-        # 预览模式下跳过服务检查
-        if not preview:
-            # 检查服务
-            if not self.check_services():
-                return False
+        # 检查服务
+        if not self.check_services():
+            return False
         
         # 生成内容
         content = self.generate_content(topic)
         print(f"\n📝 生成的内容:\n{content}")
-        
-        if preview:
-            print("\n👀 预览模式：内容已生成，跳过发布步骤。")
-            return True
         
         # 发布微博
         success = self.publish_weibo(content)
         
         if success:
             print("\n🎉 微博发布完成！")
+            print("✅ 发布成功")
             return True
         else:
             print("\n❌ 微博发布失败")
             return False
 
 if __name__ == "__main__":
-    import argparse
+    import sys
     
-    parser = argparse.ArgumentParser(description='微博发布器')
-    parser.add_argument('--topic', type=str, help='指定话题')
-    parser.add_argument('--preview', action='store_true', help='预览模式，仅生成不发布')
-    
-    args = parser.parse_args()
+    topic = "今日热点"
+    if len(sys.argv) > 1:
+        topic = sys.argv[1]
     
     publisher = WeiboPublisher()
-    success = publisher.run(args.topic, args.preview)
-    
-    if success:
-        print("✅ 发布成功")
-        sys.exit(0)
-    else:
-        print("❌ 发布失败")
-        sys.exit(1)
+    publisher.run(topic)
