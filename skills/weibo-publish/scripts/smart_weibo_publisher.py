@@ -11,6 +11,7 @@ import subprocess
 import requests
 import json
 import websocket
+from improved_content_generator import call_dogegg_ai
 
 class WeiboPublisher:
     def __init__(self):
@@ -36,22 +37,16 @@ class WeiboPublisher:
     
     def generate_content(self, topic="今日热点"):
         """生成微博内容"""
-        print(f"🎯 生成话题内容: {topic}")
+        print(f"🎯 使用改进的AI系统生成话题内容: {topic}")
         
-        content = f"🔥 {topic}：深度洞察与未来展望\n\n"
-        content += "📊 实时数据分析：\n"
-        content += "• 社交媒体讨论热度指数级增长，公众关注度空前\n"
-        content += "• 权威媒体持续跟踪报道，影响力不断扩大\n"
-        content += "• 85%的网民表示对此话题深有共鸣\n\n"
-        content += "💡 三大核心洞察：\n"
-        content += "1️⃣ 本质分析：透过现象看本质，理解深层原因\n"
-        content += "2️⃣ 影响评估：短期波动与长期趋势的综合判断\n"
-        content += "3️⃣ 未来展望：基于现状的合理预测与建议\n\n"
-        content += "💎 每一个热点背后都有其深层逻辑。独立思考，理性分析，不被情绪左右，这是信息时代必备的素养。\n\n"
-        content += "#深度洞察 #理性思考 #未来展望 #独立分析"
+        content = call_dogegg_ai(topic)
         
-        print("✅ 内容生成成功")
-        return content
+        if content:
+            print("✅ 高质量内容生成成功")
+            return content
+        else:
+            print("⚠️ AI生成失败，使用应急兜底内容")
+            return f"🔥 # {topic} # ：深度见解正在路上的狗蛋狗狗🐕建议大家保持关注！ #今日热点"
     
     def publish_weibo(self, content):
         """发布微博"""
@@ -143,20 +138,27 @@ class WeiboPublisher:
             print(f"❌ 发布过程出错: {e}")
             return False
     
-    def run(self, topic=None):
+    def run(self, topic=None, preview=False):
         """运行发布流程"""
         print("🚀 启动微博发布系统")
         
-        # 检查服务
-        if not self.check_services():
-            return False
-        
-        # 生成内容
+        # 处理话题
         if not topic:
             topic = "今日热点"
         
+        # 预览模式下跳过服务检查
+        if not preview:
+            # 检查服务
+            if not self.check_services():
+                return False
+        
+        # 生成内容
         content = self.generate_content(topic)
         print(f"\n📝 生成的内容:\n{content}")
+        
+        if preview:
+            print("\n👀 预览模式：内容已生成，跳过发布步骤。")
+            return True
         
         # 发布微博
         success = self.publish_weibo(content)
@@ -173,11 +175,12 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='微博发布器')
     parser.add_argument('--topic', type=str, help='指定话题')
+    parser.add_argument('--preview', action='store_true', help='预览模式，仅生成不发布')
     
     args = parser.parse_args()
     
     publisher = WeiboPublisher()
-    success = publisher.run(args.topic)
+    success = publisher.run(args.topic, args.preview)
     
     if success:
         print("✅ 发布成功")
