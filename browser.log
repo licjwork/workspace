@@ -1,8 +1,0 @@
-[10:41:39] [3955624:3955624:0408/104139.302238:ERROR:base/memory/shared_memory_switch.cc:289] Failed global descriptor lookup: 7
-[10:41:39] 
-[10:41:39] DevTools listening on ws://127.0.0.1:18800/devtools/browser/dabfdb6b-3e81-4c96-8d66-bcce48e6070a
-[10:41:39] [3955454:3955454:0408/104139.539428:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.ListActivatableNames: object_path= /org/freedesktop/DBus: org.freedesktop.DBus.Error.AccessDenied: An AppArmor policy prevents this sender from sending this message to this recipient; type="method_call", sender=":1.92" (uid=1000 pid=3955454 comm="/snap/chromium/3396/usr/lib/chromium-browser/chrom" label="snap.chromium.chromium (enforce)") interface="org.freedesktop.DBus" member="ListActivatableNames" error name="(unset)" requested_reply="0" destination="org.freedesktop.DBus" (bus)
-[10:41:54] Opening in existing browser session.
-[10:42:09] Opening in existing browser session.
-[10:42:24] Opening in existing browser session.
-[10:42:39] Opening in existing browser session.

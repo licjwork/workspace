@@ -78,3 +78,27 @@
 - 内容要有深度，不只是表面分析
 
 **参考案例**：张雪峰去世事件微博，包含具体数据、预警信号、实用建议、情感共鸣
+
+## 微博发布技能前置操作规范
+
+**重要发现**：微博发布技能依赖VNC服务器和浏览器服务，必须确保这些服务正常运行。
+
+**前置操作流程**：
+1. **检查VNC状态**：`ps aux | grep vnc`
+2. **启动VNC服务器**：`vncserver :1 -geometry 1280x800 -depth 24`
+3. **设置访问权限**：`xhost +`
+4. **启动浏览器**：`DISPLAY=:1 /snap/bin/chromium --no-sandbox --remote-debugging-port=18800 --remote-allow-origins=* --disable-gpu --no-first-run --disable-default-apps https://m.weibo.cn/compose`
+5. **验证CDP连接**：`curl -s http://localhost:18800/json/list`
+
+**自动化检查点**：
+- VNC进程是否存在
+- 浏览器是否运行
+- CDP端口(18800)是否可访问
+- 微博发布页面是否加载完成
+
+**故障处理**：
+- 如果VNC未运行，按上述流程重新启动
+- 如果浏览器未运行，重新启动并确保使用正确的显示端口
+- 如果CDP连接失败，检查浏览器启动参数和端口配置
+
+**执行时机**：每次触发微博发布技能前必须执行此前置检查
