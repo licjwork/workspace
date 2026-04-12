@@ -1,8 +1,7 @@
-# OpenClaw系统文档
+# HEARTBEAT.md Template
 
-本文件已不再包含定时任务相关内容。
+```markdown
+# Keep this file empty (or with only comments) to skip heartbeat API calls.
 
-系统当前状态：
-- ✅ OpenClaw网关服务正常运行
-- ✅ 微博Skill功能完整保留
-- ✅ 所有定时任务已清理
+# Add tasks below when you want the agent to check something periodically.
+```

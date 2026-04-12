@@ -1,7 +1,0 @@
-{
-  "ownerId": "default",
-  "slug": "weibo-publish",
-  "version": "1.0.0",
-  "publishedAt": 1775596800000,
-  "description": "Publish text posts to Weibo using browser automation with VNC and Chrome DevTools Protocol"
-}
