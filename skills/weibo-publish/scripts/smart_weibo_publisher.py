@@ -7,13 +7,17 @@
 import os
 import sys
 import time
+import json
+import requests
 from improved_content_generator import call_dogegg_ai
+import websocket
 
 class CleanWeiboPublisher:
     def __init__(self, topic):
         self.topic = topic
         self.research_context = f'关于话题"{topic}"的讨论和相关信息'
-    
+        self.ws_url = self._get_ws_url()
+
     def get_trending_topics(self):
         """获取热搜榜"""
         print("🔍 第一步：正在查询微博热搜榜...")
@@ -34,7 +38,17 @@ class CleanWeiboPublisher:
             print(f"  {i}. {topic}")
         
         return trending_topics
-    
+
+    def _get_ws_url(self):
+        try:
+            response = requests.get(f'http://localhost:{self.port}/json/list', timeout=5)
+            pages = response.json()
+            if not pages:
+                return None
+            return pages[0]['webSocketDebuggerUrl']
+        except Exception as e:
+            print(f"❌ 无法连接到浏览器调试端口: {e}")
+            return None
     def search_topic_content(self):
         """搜索话题内容"""
         print(f"\n🔍 第二步：正在搜索话题 [{self.topic}]...")
@@ -60,15 +74,59 @@ class CleanWeiboPublisher:
             return None
     
     def publish_weibo(self, content):
-        """发布微博"""
-        print("\n🚀 正在准备发布到微博...")
-        
-        # 模拟发布过程
-        time.sleep(2)
-        
-        print("✅ 微博发布指令已发送")
-        print(f"🎉 话题 [{self.topic}] 发布流程已完成")
-        return True
+        """使用 CDP 直接发布到微博"""
+        ws_url = self._get_ws_url()
+        if not ws_url:
+            print("❌ 浏览器 WebSocket 未就绪")
+            return False
+
+        print("🚀 正在准备发布到微博...")
+        ws = websocket.create_connection(ws_url, timeout=20)
+        try:
+            # 确保在发布页面
+            ws.send(json.dumps({"id": 1, "method": "Page.navigate", "params": {"url": "https://m.weibo.cn/compose"}}))
+            time.sleep(5)
+
+            # 输入文案
+            # 转义引号以防 JS 报错
+            safe_content = content.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
+            js_code = f"""
+            (function() {{
+                var area = document.querySelector('textarea[placeholder*="分享新鲜事"]');
+                if (area) {{
+                    area.value = "{safe_content}";
+                    area.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                    return true;
+                }}
+                return false;
+            }})()
+            """
+            ws.send(json.dumps(
+                {"id": 2, "method": "Runtime.evaluate", "params": {"expression": js_code, "returnByValue": True}}))
+            time.sleep(2)
+
+            # 点击发送
+            click_js = """
+            (function() {
+                var btn = document.querySelector('a.m-send-btn');
+                if (btn && !btn.classList.contains('disabled')) {
+                    btn.click();
+                    return true;
+                }
+                return false;
+            })()
+            """
+            ws.send(json.dumps(
+                {"id": 3, "method": "Runtime.evaluate", "params": {"expression": click_js, "returnByValue": True}}))
+            time.sleep(3)
+
+            print("✅ 微博发布指令已发送")
+            return True
+        except Exception as e:
+            print(f"❌ 发布过程中出现异常: {e}")
+            return False
+        finally:
+            ws.close()
     
     def run(self):
         """运行完整的发布流程"""
