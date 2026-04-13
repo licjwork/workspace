@@ -41,7 +41,7 @@ class CleanWeiboPublisher:
 
     def _get_ws_url(self):
         try:
-            response = requests.get(f'http://localhost:{self.port}/json/list', timeout=5)
+            response = requests.get(f'http://localhost:{18800}/json/list', timeout=5)
             pages = response.json()
             if not pages:
                 return None
