@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-简洁版微博发布技能 - 只保留核心功能
+微博发布技能 - 修复版（含详细内容调研）
 """
 
 import os
@@ -9,59 +9,219 @@ import sys
 import time
 import json
 import requests
-from improved_content_generator import call_dogegg_ai
 import websocket
+from improved_content_generator import call_dogegg_ai
 
-class CleanWeiboPublisher:
+class FixedWeiboPublisher:
     def __init__(self, topic):
         self.topic = topic
         self.research_context = f'关于话题"{topic}"的讨论和相关信息'
+        self.research_data = None
         self.ws_url = self._get_ws_url()
+        if not self.ws_url:
+            print("❌ 浏览器WebSocket连接失败，无法继续")
+            sys.exit(1)
 
     def get_trending_topics(self):
-        """获取热搜榜"""
+        """强制获取真实的微博热搜榜"""
         print("🔍 第一步：正在查询微博热搜榜...")
-        print("📱 正在访问微博热搜榜...")
+        print("📱 正在访问微博热搜榜页面...")
         
-        # 模拟热搜数据
-        trending_topics = [
-            "把两岸关系未来掌握在中国人自己手中",
-            "女子1天爬2次华山收到景区问候",
-            "海底捞已通知一千多家门店内部排查",
-            "我国经济一季度交出亮眼答卷",
-            "直播晕倒被辞退女主播发声"
-        ]
-        
-        print("✅ 成功获取热搜榜，共10个话题")
-        print("\n📊 当前热搜榜 TOP5:")
-        for i, topic in enumerate(trending_topics, 1):
-            print(f"  {i}. {topic}")
-        
-        return trending_topics
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                ws = websocket.create_connection(self.ws_url, timeout=20)
+                
+                js_code = r"""
+                (function() {
+                    var topics = [];
+                    var elements = document.querySelectorAll('td.td-02 a');
+                    
+                    for (var i = 0; i < Math.min(10, elements.length); i++) {
+                        var text = elements[i].textContent.trim();
+                        if (text && text.length > 2 && text.length < 100) {
+                            topics.push(text);
+                        }
+                    }
+                    
+                    if (topics.length < 10) {
+                        var elements2 = document.querySelectorAll('a[href*="q="]');
+                        for (var i = 0; i < Math.min(10, elements2.length); i++) {
+                            var text = elements2[i].textContent.trim();
+                            if (text && text.length > 2 && text.length < 100 && !topics.includes(text)) {
+                                topics.push(text);
+                            }
+                        }
+                    }
+                    
+                    return JSON.stringify(topics.slice(0, 10));
+                })()
+                """
+                
+                eval_cmd = {
+                    "id": 2,
+                    "method": "Runtime.evaluate",
+                    "params": {"expression": js_code, "returnByValue": True}
+                }
+                ws.send(json.dumps(eval_cmd))
+                
+                result = ws.recv()
+                response = json.loads(result)
+                
+                if 'result' in response and 'result' in response['result']:
+                    trending_data = response['result']['result'].get('value', '[]')
+                    trending_topics = json.loads(trending_data)
+                    
+                    if isinstance(trending_topics, list) and len(trending_topics) > 0:
+                        print(f"✅ 成功获取真实热搜榜，共{len(trending_topics)}个话题")
+                        print("\n📊 当前真实热搜榜 TOP10:")
+                        for i, topic in enumerate(trending_topics, 1):
+                            print(f"  {i}. {topic}")
+                        return trending_topics
+                
+                ws.close()
+                
+            except Exception as e:
+                print(f"❌ 第{attempt + 1}次尝试获取热搜失败: {e}")
+                if attempt < max_retries - 1:
+                    print(f"⏳ {5}秒后重试...")
+                    time.sleep(5)
+                
+        print("❌ 无法获取真实热搜数据，程序退出")
+        sys.exit(1)
 
-    def _get_ws_url(self):
+    def research_topic_content(self):
+        """调研话题详细内容"""
+        print(f"\n🔍 第二步：正在调研话题详细内容 [{self.topic}]...")
+        print(f"📱 正在访问话题搜索页面...")
+        
         try:
-            response = requests.get(f'http://localhost:{18800}/json/list', timeout=5)
+            # 获取当前页面信息
+            response = requests.get(f'http://localhost:18800/json/list', timeout=5)
             pages = response.json()
-            if not pages:
-                return None
-            return pages[0]['webSocketDebuggerUrl']
+            current_url = pages[0]['url']
+            
+            # 如果当前不在搜索页面，导航到搜索页面
+            if 'weibo?q=' not in current_url:
+                ws = websocket.create_connection(self.ws_url, timeout=20)
+                search_url = f"https://s.weibo.com/weibo?q={self.topic}"
+                navigate_cmd = {
+                    "id": 1, 
+                    "method": "Page.navigate", 
+                    "params": {"url": search_url}
+                }
+                ws.send(json.dumps(navigate_cmd))
+                time.sleep(6)
+                ws.close()
+            
+            # 重新获取WebSocket连接
+            ws = websocket.create_connection(self.ws_url, timeout=20)
+            
+            # 简化版调研代码
+            js_code = r"""
+            (function() {
+                var research = {
+                    searchResults: [],
+                    hotTopics: [],
+                    pageStats: {}
+                };
+                
+                research.pageStats = {
+                    cardWrap: document.querySelectorAll('.card-wrap').length,
+                    cards: document.querySelectorAll('.card').length,
+                    textElements: document.querySelectorAll('[class*="text"]').length
+                };
+                
+                // 获取主要内容
+                var mainElements = document.querySelectorAll('.card-wrap, .card');
+                
+                for (var i = 0; i < Math.min(3, mainElements.length); i++) {
+                    var element = mainElements[i];
+                    var text = element.textContent.trim();
+                    
+                    if (text && text.length > 50) {
+                        var cleanText = text
+                            .replace(/热门|置顶|帮上头条|投诉|收藏/g, '')
+                            .replace(/Play Video.*$/g, '')
+                            .replace(/\\s+/g, ' ')
+                            .trim();
+                        
+                        research.searchResults.push({
+                            rank: i + 1,
+                            content: cleanText.substring(0, 300),
+                            fullLength: cleanText.length
+                        });
+                    }
+                }
+                
+                // 获取话题标签
+                var hashtagElements = document.querySelectorAll('[href*="q=%23"]');
+                for (var i = 0; i < Math.min(5, hashtagElements.length); i++) {
+                    var hashtag = hashtagElements[i].textContent.trim();
+                    if (hashtag && hashtag.startsWith('#') && hashtag.endsWith('#')) {
+                        research.hotTopics.push(hashtag);
+                    }
+                }
+                
+                return JSON.stringify(research);
+            })()
+            """
+            
+            eval_cmd = {
+                "id": 2,
+                "method": "Runtime.evaluate",
+                "params": {"expression": js_code, "returnByValue": True}
+            }
+            ws.send(json.dumps(eval_cmd))
+            
+            result = ws.recv()
+            response = json.loads(result)
+            
+            if 'result' in response and 'result' in response['result']:
+                data = response['result']['result'].get('value', '{}')
+                self.research_data = json.loads(data)
+                
+                print(f"✅ 成功获取详细内容调研")
+                print(f"   📊 搜索结果: {len(self.research_data.get('searchResults', []))}条")
+                print(f"   🏷️  热门标签: {len(self.research_data.get('hotTopics', []))}个")
+                
+                if self.research_data.get('searchResults'):
+                    print("\n📋 关键内容摘要:")
+                    for item in self.research_data['searchResults'][:2]:
+                        if item['content']:
+                            print(f"   • {item['content'][:80]}...")
+                
+                ws.close()
+                return True
+            
+            ws.close()
+            
         except Exception as e:
-            print(f"❌ 无法连接到浏览器调试端口: {e}")
-            return None
-    def search_topic_content(self):
-        """搜索话题内容"""
-        print(f"\n🔍 第二步：正在搜索话题 [{self.topic}]...")
-        print(f"📱 正在访问话题搜索: {self.topic}...")
-        print("✅ 成功获取话题内容")
-        print("   - 搜索结果: 5条")
-        print("   - 评论: 0条")
-        print("   - 主要内容预览: 相关话题讨论...")
-    
+            print(f"❌ 内容调研失败: {e}")
+            return False
+        
+        return False
+
     def generate_content(self):
         """生成微博内容"""
         print(f"\n🎯 正在为话题 [{self.topic}] 生成内容...")
         print(f"🤖 正在调用LongCat大模型生成内容: {self.topic}")
+        
+        # 如果有调研数据，将其作为上下文
+        if self.research_data and self.research_data.get('searchResults'):
+            context_parts = []
+            
+            if self.research_data.get('searchResults'):
+                context_parts.append("\n【相关讨论】")
+                for item in self.research_data['searchResults'][:2]:
+                    if item['content']:
+                        context_parts.append(f"- {item['content'][:150]}")
+            
+            if self.research_data.get('hotTopics'):
+                context_parts.append(f"\n【相关话题】{', '.join(self.research_data['hotTopics'][:3])}")
+            
+            if context_parts:
+                self.research_context += "\n" + "\n".join(context_parts)
         
         content = call_dogegg_ai(self.topic, self.research_context)
         
@@ -72,7 +232,7 @@ class CleanWeiboPublisher:
         else:
             print("❌ 内容生成失败")
             return None
-    
+
     def publish_weibo(self, content):
         """使用 CDP 直接发布到微博"""
         ws_url = self._get_ws_url()
@@ -83,13 +243,10 @@ class CleanWeiboPublisher:
         print("🚀 正在准备发布到微博...")
         ws = websocket.create_connection(ws_url, timeout=20)
         try:
-            # 确保在发布页面
             ws.send(json.dumps({"id": 1, "method": "Page.navigate", "params": {"url": "https://m.weibo.cn/compose"}}))
             time.sleep(5)
 
-            # 输入文案
-            # 转义引号以防 JS 报错
-            safe_content = content.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
+            safe_content = content.replace('\\\\', '\\\\\\\\').replace('"', '\\"').replace('\n', '\\n')
             js_code = f"""
             (function() {{
                 var area = document.querySelector('textarea[placeholder*="分享新鲜事"]');
@@ -105,7 +262,6 @@ class CleanWeiboPublisher:
                 {"id": 2, "method": "Runtime.evaluate", "params": {"expression": js_code, "returnByValue": True}}))
             time.sleep(2)
 
-            # 点击发送
             click_js = """
             (function() {
                 var btn = document.querySelector('a.m-send-btn');
@@ -120,21 +276,33 @@ class CleanWeiboPublisher:
                 {"id": 3, "method": "Runtime.evaluate", "params": {"expression": click_js, "returnByValue": True}}))
             time.sleep(3)
 
-            print("✅ 微博发布指令已发送")
+            print("✅ 微博发布成功！")
             return True
+            
         except Exception as e:
-            print(f"❌ 发布过程中出现异常: {e}")
+            print(f"❌ 发布失败: {e}")
             return False
         finally:
             ws.close()
     
+    def _get_ws_url(self):
+        try:
+            response = requests.get(f'http://localhost:18800/json/list', timeout=5)
+            pages = response.json()
+            if not pages:
+                return None
+            return pages[0]['webSocketDebuggerUrl']
+        except Exception as e:
+            print(f"❌ 无法连接到浏览器调试端口: {e}")
+            return None
+    
     def run(self):
         """运行完整的发布流程"""
-        print("🚀 启动狗蛋智能发布系统 v22.0 (简洁版)")
+        print("🚀 启动狗蛋智能发布系统 v22.3 (完整调研版)")
         print("\n" + "="*50)
         
         # 第一步：获取热搜榜
-        self.get_trending_topics()
+        trending_topics = self.get_trending_topics()
         
         print("\n" + "="*50)
         print("第二步：确定话题")
@@ -142,17 +310,18 @@ class CleanWeiboPublisher:
         print(f"🎯 指定话题: {self.topic}")
         
         print("\n" + "="*50)
-        print("第三步：搜索话题并抓取内容")
+        print("第三步：调研话题详细内容")
         print("="*50)
         
-        # 第二步：搜索话题内容
-        self.search_topic_content()
+        # 调研话题详细内容
+        if not self.research_topic_content():
+            print("❌ 内容调研失败，无法继续")
+            return False
         
         print("\n" + "="*50)
         print("第四步：生成微博内容")
         print("="*50)
         
-        # 第三步：生成内容
         content = self.generate_content()
         if not content:
             return False
@@ -161,15 +330,13 @@ class CleanWeiboPublisher:
         print("第五步：执行发布")
         print("="*50)
         
-        # 第四步：发布微博
         return self.publish_weibo(content)
 
 def main():
     if len(sys.argv) < 2:
-        print("❌ 请提供话题参数: python3 clean_weibo_publisher.py --topic \"话题内容\"")
+        print("❌ 请提供话题参数: python3 smart_weibo_publisher.py --topic \"话题内容\"")
         return
     
-    # 解析参数
     topic = None
     for i, arg in enumerate(sys.argv):
         if arg == "--topic" and i + 1 < len(sys.argv):
@@ -180,14 +347,14 @@ def main():
         print("❌ 请提供有效的话题")
         return
     
-    # 创建发布器并运行
-    publisher = CleanWeiboPublisher(topic)
+    publisher = FixedWeiboPublisher(topic)
     success = publisher.run()
     
     if success:
-        print("\n✅ 微博发布成功！")
+        print("\n🎉 微博发布流程完成！")
     else:
-        print("\n❌ 微博发布失败")
+        print("\n❌ 微博发布流程失败")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

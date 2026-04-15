@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "feishu": {
+      "command": "/home/ubuntu/.openclaw/extensions/openclaw-lark/bin/openclaw-lark.js"
+    }
+  },
+  "imports": []
+}
