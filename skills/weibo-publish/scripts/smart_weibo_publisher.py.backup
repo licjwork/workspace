@@ -101,17 +101,18 @@ class FixedWeiboPublisher:
             pages = response.json()
             current_url = pages[0]['url']
             
-            # 总是重新导航到指定话题的搜索页面，确保搜索最新内容
-            ws = websocket.create_connection(self.ws_url, timeout=20)
-            search_url = f"https://s.weibo.com/weibo?q={self.topic}"
-            navigate_cmd = {
-                "id": 1, 
-                "method": "Page.navigate", 
-                "params": {"url": search_url}
-            }
-            ws.send(json.dumps(navigate_cmd))
-            time.sleep(8)  # 增加等待时间确保页面完全加载
-            ws.close()
+            # 如果当前不在搜索页面，导航到搜索页面
+            if 'weibo?q=' not in current_url:
+                ws = websocket.create_connection(self.ws_url, timeout=20)
+                search_url = f"https://s.weibo.com/weibo?q={self.topic}"
+                navigate_cmd = {
+                    "id": 1, 
+                    "method": "Page.navigate", 
+                    "params": {"url": search_url}
+                }
+                ws.send(json.dumps(navigate_cmd))
+                time.sleep(6)
+                ws.close()
             
             # 重新获取WebSocket连接
             ws = websocket.create_connection(self.ws_url, timeout=20)
