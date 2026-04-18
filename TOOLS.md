@@ -1,100 +1,83 @@
-# TOOLS.md - Local Notes
+# TOOLS.md — 工具与环境注册表
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
-
-## What Goes Here
-
-Things like:
-
-- Camera names and locations
-- SSH hosts and aliases
-- Preferred voices for TTS
-- Speaker/room names
-- Device nicknames
-- Anything environment-specific
-
-## Examples
-
-```markdown
-### Cameras
-
-- living-room → Main area, 180° wide angle
-- front-door → Entrance, motion-triggered
-
-### SSH
-
-- home-server → 192.168.1.100, user: admin
-
-### TTS
-
-- Preferred voice: "Nova" (warm, slightly British)
-- Default speaker: Kitchen HomePod
-```
-
-## Why Separate?
-
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
-
-### Tavily Search
-- API_KEY: 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
-- Script path: ~/.openclaw/workspace/skills/tavily/scripts/tavily_search.py
-- Command format: `python3 scripts/tavily_search.py "关键词" --api-key "API_KEY" --topic news --max-results 5`
-- 新闻搜索使用 --topic news
-- 普通搜索使用 --topic general
-
-### 狗蛋导航系统
-- **项目目录**: `/home/ubuntu/.openclaw/workspace/web-navigation-system/`
-- **启动命令**: `cd /home/ubuntu/.openclaw/workspace/web-navigation-system && ./start-all.sh`
-- **停止命令**: `cd /home/ubuntu/.openclaw/workspace/web-navigation-system && ./stop-all.sh`
-- **状态检查**: `cd /home/ubuntu/.openclaw/workspace/web-navigation-system && ./status.sh`
-- **前端访问**: http://82.156.52.192:8017
-- **后端API**: http://localhost:5000
+这里是我的工具箱。每个工具只在这里注册一次，其他文件通过引用使用。
 
 ---
 
-Add whatever helps you do your job. This is your cheat sheet.
+## 当前环境
 
-### 微博发布系统
-- **VNC显示**: :1 (端口5901)
-- **浏览器调试端口**: 18800
-- **浏览器路径**: /snap/bin/chromium
-- **发布页面**: https://m.weibo.cn/compose
-- **文本框选择器**: `textarea[placeholder*="分享新鲜事"]`
-- **发布按钮选择器**: `a.m-send-btn`
+| 属性 | 值 |
+|------|-----|
+| 运行环境 | Ubuntu 服务器 |
+| 时区 | Asia/Shanghai (UTC+8) |
+| 工作目录 | `/home/ubuntu/.openclaw/workspace/` |
 
-#### 启动命令
+---
+
+## 工具清单
+
+### 🔍 Tavily 搜索引擎
+
+| 属性 | 值 |
+|------|-----|
+| 用途 | 新闻搜索、信息检索 |
+| API_KEY | `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` |
+| 脚本路径 | `~/.openclaw/workspace/skills/tavily/scripts/tavily_search.py` |
+| 默认搜索引擎 | 所有搜索需求默认使用 Tavily |
+
+**调用方式**：
 ```bash
-# 启动VNC
-vncserver :1 -geometry 1280x800 -depth 24
-xhost +
+# 新闻搜索
+python3 scripts/tavily_search.py "关键词" --api-key "API_KEY" --topic news --max-results 5
 
-# 启动浏览器
-DISPLAY=:1 /snap/bin/chromium --no-sandbox --remote-debugging-port=18800 --remote-allow-origins=* --disable-gpu --no-first-run --disable-default-apps https://m.weibo.cn/compose
+# 普通搜索
+python3 scripts/tavily_search.py "关键词" --api-key "API_KEY" --topic general --max-results 5
 ```
 
-#### CDP连接
-```python
-import requests
-import websocket
-import json
+---
 
-# 获取WebSocket URL
-response = requests.get('http://localhost:18800/json/list')
-page_info = response.json()[0]
-ws_url = page_info['webSocketDebuggerUrl']
+### 📱 微博发布技能
 
-# 建立连接
-ws = websocket.create_connection(ws_url)
+| 属性 | 值 |
+|------|-----|
+| 用途 | 微博内容自动发布 |
+| 运行环境 | Ubuntu 远程服务器 |
+| 技能文档 | `/home/ubuntu/.openclaw/workspace/skills/weibo-publish/SKILL.md` |
+| 触发关键词 | "微博技能发布" |
 
-# 发送CDP命令
-message = {
-    "id": 1,
-    "method": "Runtime.evaluate",
-    "params": {
-        "expression": "your_javascript_code",
-        "returnByValue": True
-    }
-}
-ws.send(json.dumps(message))
-response = ws.recv()
+> 详细规范和前置检查流程见 `MEMORY.md` → 微博发布技能规范
+
+---
+
+### 🌐 狗蛋导航系统
+
+| 属性 | 值 |
+|------|-----|
+| 项目目录 | `/home/ubuntu/.openclaw/workspace/web-navigation-system/` |
+| 前端访问 | http://82.156.52.192:8017 |
+| 后端 API | http://localhost:5000 |
+
+**管理命令**：
+```bash
+cd /home/ubuntu/.openclaw/workspace/web-navigation-system
+./start-all.sh    # 启动
+./stop-all.sh     # 停止
+./status.sh       # 状态检查
 ```
+
+---
+
+## 技能索引
+
+| 技能 | 路径 | 状态 |
+|------|------|------|
+| Tavily 搜索 | `skills/tavily/` | ✅ 可用 |
+| 微博发布 | `skills/weibo-publish/` | ✅ 可用 |
+| 微博评论回复 | `skills/weibo-comment-reply/` | ✅ 可用 |
+| 技能搜索 | `skills/find-skills/` | ✅ 可用 |
+| 自我改进 | `skills/self-improving-agent/` | ✅ 可用 |
+| 技能审核 | `skills/skill-vetter/` | ✅ 可用 |
+
+---
+
+_工具是手段，不是目的。用对工具，事半功倍。_

@@ -1,25 +1,46 @@
-# USER.md - About Your Human
+# USER.md — 饲养员画像
 
-_Learn about the person you're helping. Update this as you go._
+_理解你，才能更好地服务你。_
 
-- **Name:** 饲养员
-- **What to call them:** 饲养员
-- **Pronouns:** _(optional)_
-- **Timezone:** Asia/Shanghai
-- **Notes:** 负责管理狗蛋系统、微博、小红书管理者
+## 基本信息
 
-## Context
+- **称呼**: 饲养员
+- **时区**: Asia/Shanghai (UTC+8)
+- **角色**: 狗蛋系统管理者、社交媒体运营者
 
-- 正在使用狗蛋管理系统、微博、小红书经营
-- 系统时间: 2026-03-19 22:06 (Asia/Shanghai)
+## 项目全景
 
-## 项目需求
+### 活跃项目
 
-### 当前状态
-- ✅ 狗蛋系统已完全修复并正常运行
-- ✅ 微博Skill功能完整保留并可手动使用
-- ✅ 所有定时任务已清理，系统保持简洁
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 狗蛋系统 | ✅ 运行中 | OpenClaw 核心系统 |
+| 微博运营 | ✅ 运行中 | 基于 Ubuntu 的自动化发布 |
+| 小红书运营 | 📋 计划中 | 待开发 |
+
+### 基础设施
+
+- **运行环境**: Ubuntu 服务器
+- **饲养员本地**: macOS
+
+## 偏好观察
+
+### 沟通偏好
+- 喜欢简洁直接的回复，不要废话
+- 倾向于中文沟通
+- 重视执行力，不喜欢反复确认
+
+### 工作模式
+- 经常处理财务对账类任务（Excel、银行流水）
+- 社交媒体内容生产是核心工作之一
+- 对系统自动化有持续追求
+
+### 常见任务模式
+- 🔄 微博发布（高频）
+- 📊 数据处理与对账
+- 🛠️ 系统维护与优化
+- 📝 内容创作与审核
 
 ---
 
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+_这不是档案，是理解。了解你越多，帮你越好。但我会尊重边界。_
