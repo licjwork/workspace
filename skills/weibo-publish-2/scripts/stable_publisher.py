@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+import os
+import sys
+import asyncio
+from playwright.async_api import async_playwright
+from improved_content_generator import call_dogegg_ai
+
+class StableWeiboPublisher:
+    def __init__(self, topic, persistent_session=True):
+        self.topic = topic
+        self.persistent_session = persistent_session
+        self.user_data_dir = '/home/ubuntu/.weibo-profile'
+        self.browser = None
+        self.page = None
+        self.playwright = None
+        
+    async def init_browser(self):
+        print("🚀 正在启动Playwright浏览器...")
+        self.playwright = await async_playwright().start()
+        
+        self.browser = await self.playwright.chromium.launch_persistent_context(
+            user_data_dir=self.user_data_dir,
+            headless=False,
+            args=['--no-sandbox', '--disable-setuid-sandbox']
+        )
+        
+        self.page = await self.browser.new_page()
+        print("✅ 浏览器初始化完成")
+
+    async def check_login_status(self):
+        print("🔍 检查微博登录状态...")
+        
+        try:
+            await self.page.goto('https://m.weibo.cn', wait_until='networkidle')
+            await self.page.wait_for_timeout(2000)
+            
+            current_url = self.page.url
+            if 'login' in current_url or 'passport' in current_url:
+                print("❌ 当前在登录页面，需要重新登录")
+                return False
+            else:
+                print("✅ 检测到已登录状态")
+                return True
+                
+        except Exception as e:
+            print(f"❌ 检查登录状态失败: {e}")
+            return False
+
+    async def generate_content(self):
+        print("\n✍️ 正在生成微博内容...")
+        
+        content = call_dogegg_ai(self.topic, f"关于话题'{self.topic}'的讨论和相关信息")
+        print(f"📝 内容生成完成，字数: {len(content)}")
+        return content
+
+    async def publish_weibo(self, content):
+        print("\n🚀 正在发布微博...")
+        
+        try:
+            await self.page.goto('https://m.weibo.cn/compose', wait_until='networkidle')
+            await self.page.wait_for_timeout(3000)
+            
+            textarea_selector = 'textarea[placeholder*="分享新鲜事"]'
+            await self.page.wait_for_selector(textarea_selector, timeout=10000)
+            
+            await self.page.fill(textarea_selector, content)
+            await self.page.wait_for_timeout(1000)
+            
+            send_button_selector = 'a.m-send-btn'
+            await self.page.wait_for_selector(send_button_selector, timeout=10000)
+            await self.page.click(send_button_selector)
+            
+            await self.page.wait_for_timeout(3000)
+            
+            print("✅ 微博发布成功！")
+            return True
+            
+        except Exception as e:
+            print(f"❌ 发布失败: {e}")
+            return False
+
+    async def run(self):
+        try:
+            await self.init_browser()
+            
+            if not await self.check_login_status():
+                print("❌ 需要登录，请先运行登录助手")
+                return False
+            
+            content = await self.generate_content()
+            if not content:
+                print("❌ 内容生成失败")
+                return False
+            
+            success = await self.publish_weibo(content)
+            return success
+            
+        except Exception as e:
+            print(f"❌ 运行失败: {e}")
+            return False
+        finally:
+            await self.cleanup()
+
+    async def cleanup(self):
+        if self.browser:
+            await self.browser.close()
+        if self.playwright:
+            await self.playwright.stop()
+        print("🧹 资源清理完成")
+
+async def main():
+    if len(sys.argv) < 2:
+        print("请提供话题参数")
+        sys.exit(1)
+    
+    topic = sys.argv[1]
+    
+    publisher = StableWeiboPublisher(topic, persistent_session=True)
+    
+    try:
+        success = await publisher.run()
+        return success
+    finally:
+        await publisher.cleanup()
+
+if __name__ == "__main__":
+    asyncio.run(main())

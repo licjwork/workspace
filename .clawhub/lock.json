@@ -60,6 +60,14 @@
     "feishu-doc": {
       "version": "1.2.7",
       "installedAt": 1775723203334
+    },
+    "playwright-mcp": {
+      "version": "1.0.0",
+      "installedAt": 1776901253498
+    },
+    "processon-diagram-generator": {
+      "version": "2.3.1",
+      "installedAt": 1777002157456
     }
   }
 }
