@@ -40,7 +40,7 @@ class PlaywrightWeiboPublisher:
             print("📁 使用长期会话模式，用户数据将保存")
             self.browser = await self.playwright.chromium.launch_persistent_context(
                 user_data_dir=self.user_data_dir,
-                headless=False,  # 可见模式，方便调试
+                headless=os.environ.get('HEADLESS', 'false').lower() == 'true',
                 args=[
                     '--no-sandbox',
                     '--disable-setuid-sandbox',

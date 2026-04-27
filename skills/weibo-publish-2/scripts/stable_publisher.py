@@ -20,7 +20,7 @@ class StableWeiboPublisher:
         
         self.browser = await self.playwright.chromium.launch_persistent_context(
             user_data_dir=self.user_data_dir,
-            headless=False,
+            headless=os.environ.get('HEADLESS', 'false').lower() == 'true',
             args=['--no-sandbox', '--disable-setuid-sandbox']
         )
         
