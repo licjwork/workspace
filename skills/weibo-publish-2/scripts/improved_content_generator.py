@@ -28,7 +28,7 @@ def call_longcat_api(topic, research_context=None):
     """调用LongCat大模型生成内容 - 完全无模板"""
     api_key = os.environ.get('LONGCAT_API_KEY')
     if not api_key:
-        print("❌ LongCat API Key 未配置")
+        print("❌ LONGCAT_API_KEY 未配置，请在环境变量中设置或在 .env 文件中添加")
         return None
     
     # 强调真实客观的提示词

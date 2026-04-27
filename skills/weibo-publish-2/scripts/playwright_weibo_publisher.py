@@ -24,7 +24,7 @@ class PlaywrightWeiboPublisher:
         self.playwright = None
         
         # 用户数据目录路径
-        self.user_data_dir = '/home/ubuntu/.weibo-profile'
+        self.user_data_dir = os.path.expanduser('~/.weibo-profile')
         
         # 确保用户数据目录存在
         if self.persistent_session:
@@ -82,13 +82,19 @@ class PlaywrightWeiboPublisher:
             await self.page.wait_for_timeout(2000)
             
             # 检查是否有用户头像或用户名元素
-            user_elements = await self.page.query_selector_all('.avatar, .username, .me');
+            user_elements = await self.page.query_selector_all('.avatar, .username, .me, .nav-main, .m-main-nav');
             
+            # 同时检查URL是否被重定向到登录页
+            current_url = self.page.url
+            if 'login' in current_url or 'passport' in current_url:
+                print("❌ 检测到登录页面，未登录")
+                return False
+
             if user_elements:
                 print("✅ 检测到已登录状态")
                 return True
             else:
-                print("❌ 未检测到登录状态，需要重新登录")
+                print("❌ 未检测到登录状态，可能需要重新登录")
                 return False
                 
         except Exception as e:
@@ -96,62 +102,75 @@ class PlaywrightWeiboPublisher:
             return False
 
     async def get_trending_topics(self):
-        """获取微博热搜榜 - Playwright版本"""
+        """获取微博热搜榜 - Playwright版本 (使用移动端接口)"""
         print("🔍 第一步：正在查询微博热搜榜...")
         
         try:
-            # 导航到热搜榜
-            await self.page.goto('https://s.weibo.com/top/summary', wait_until='networkidle')
-            await self.page.wait_for_timeout(3000)
+            # 导航到移动端热搜接口
+            api_url = 'https://m.weibo.cn/api/container/getIndex?containerid=106003type%3D25%26t%3D3%26disable_hot%3D1%26filter_type%3Drealtimehot'
+            await self.page.goto(api_url, wait_until='networkidle')
             
-            # 提取热搜话题
-            topics = await self.page.eval_on_selector_all(
-                'td.td-02 a, a[href*="q="]',
-                'elements => elements.map(el => el.textContent.trim()).filter(text => text && text.length > 2 && text.length < 100)'
-            )
+            # 获取页面文本并解析JSON
+            content = await self.page.text_content('body')
+            data = json.loads(content)
             
-            trending_topics = topics[:10]  # 取前10个
+            topics = []
+            cards = data.get('data', {}).get('cards', [])
+            for card in cards:
+                if card.get('card_group'):
+                    for item in card['card_group']:
+                        if item.get('desc'):
+                            topics.append(item['desc'])
+            
+            trending_topics = topics[:10]
             print(f"📊 获取到热搜话题: {trending_topics}")
             return trending_topics
             
         except Exception as e:
-            print(f"❌ 获取热搜失败: {e}")
-            return []
+            print(f"❌ 获取热搜失败 (API方式): {e}")
+            # 备选方案：尝试从普通页面提取
+            try:
+                await self.page.goto('https://s.weibo.com/top/summary', wait_until='networkidle', timeout=10000)
+                topics = await self.page.eval_on_selector_all(
+                    'td.td-02 a',
+                    'elements => elements.map(el => el.textContent.trim()).filter(text => text.length > 1)'
+                )
+                return topics[:10]
+            except:
+                return []
 
     async def research_topic(self):
-        """话题调研 - Playwright版本"""
+        """话题调研 - Playwright版本 (使用移动端搜索)"""
         print(f"\n🔍 第二步：正在调研话题 '{self.topic}'...")
         
         try:
-            # 导航到搜索页面
-            search_url = f"https://s.weibo.com/weibo?q={self.topic}"
+            # 导航到移动端搜索页面
+            search_url = f"https://m.weibo.cn/search?containerid=100103type%3D1%26q%3D{self.topic}"
             await self.page.goto(search_url, wait_until='networkidle')
-            await self.page.wait_for_timeout(5000)
+            await self.page.wait_for_timeout(3000)
             
             # 提取搜索结果信息
             research_data = await self.page.evaluate("""
                 () => {
                     const research = {
                         searchResults: [],
-                        hotTopics: [],
                         pageStats: {}
                     };
                     
-                    // 提取搜索结果
-                    const results = document.querySelectorAll('.card-wrap .card-feed, .card-wrap .content');
-                    results.forEach((result, index) => {
+                    // 提取搜索结果文本
+                    const cards = document.querySelectorAll('.card-main .card-feed, .card-main .weibo-text');
+                    cards.forEach((card, index) => {
                         if (index < 5) {
-                            const text = result.textContent.trim();
-                            if (text && text.length > 20) {
-                                research.searchResults.push(text.substring(0, 200));
+                            const text = card.textContent.trim();
+                            if (text && text.length > 10) {
+                                research.searchResults.push(text.substring(0, 300));
                             }
                         }
                     });
                     
-                    // 提取页面统计信息
                     research.pageStats = {
-                        resultCount: results.length,
-                        searchTerm: window.location.search
+                        resultCount: cards.length,
+                        url: window.location.href
                     };
                     
                     return research;
@@ -198,9 +217,21 @@ class PlaywrightWeiboPublisher:
             await self.page.wait_for_timeout(1000)
             
             # 点击发布按钮
-            publish_selector = 'a.m-send-btn'
-            await self.page.wait_for_selector(publish_selector, timeout=5000)
-            await self.page.click(publish_selector)
+            publish_selectors = ['a.m-send-btn', 'button:has-text("发送")', 'a:has-text("发布")']
+            publish_button = None
+            for selector in publish_selectors:
+                try:
+                    publish_button = await self.page.wait_for_selector(selector, timeout=2000)
+                    if publish_button:
+                        await publish_button.click()
+                        print(f"✅ 使用选择器 '{selector}' 点击了发布按钮")
+                        break
+                except:
+                    continue
+            
+            if not publish_button:
+                print("❌ 未找到发布按钮")
+                return False
             
             # 等待发布完成
             await self.page.wait_for_timeout(3000)

@@ -9,7 +9,7 @@ class StableWeiboPublisher:
     def __init__(self, topic, persistent_session=True):
         self.topic = topic
         self.persistent_session = persistent_session
-        self.user_data_dir = '/home/ubuntu/.weibo-profile'
+        self.user_data_dir = os.path.expanduser('~/.weibo-profile')
         self.browser = None
         self.page = None
         self.playwright = None
