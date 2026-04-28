@@ -24,8 +24,9 @@ class WeiboPlaywrightImageFetcher:
         self.context = None
         self.page = None
         self.profile_dir = Path.home() / '.weibo-image-profile'
+        # 使用项目下的 uploads 目录
         self.uploads_dir = Path('/home/ubuntu/.openclaw/workspace/uploads')
-        self.uploads_dir.mkdir(exist_ok=True)
+        self.uploads_dir.mkdir(parents=True, exist_ok=True)
         
         # 如果持久化目录不存在，创建它
         if self.persistent_session:
@@ -41,14 +42,14 @@ class WeiboPlaywrightImageFetcher:
             print("📁 使用持久化会话模式")
             self.context = await playwright.chromium.launch_persistent_context(
                 str(self.profile_dir),
-                headless=False,  # 设置为False以便查看浏览器操作
+                headless=True,  # 设置为True以静默运行
                 viewport={'width': 1280, 'height': 800},
                 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             )
             self.page = await self.context.new_page()
         else:
             print("📁 使用临时会话模式")
-            self.browser = await playwright.chromium.launch(headless=False)
+            self.browser = await playwright.chromium.launch(headless=True)
             self.context = await self.browser.new_context()
             self.page = await self.context.new_page()
             
@@ -241,37 +242,34 @@ class WeiboPlaywrightImageFetcher:
         return any(ext in url.lower() for ext in image_extensions)
         
     async def _download_image(self, url, filename):
-        """下载单张图片"""
+        """下载单张图片并转换为PNG"""
         try:
-            # 使用requests下载图片
-            response = requests.get(url, timeout=10)
+            import io
+            from PIL import Image
+            
+            response = requests.get(url, timeout=15)
             response.raise_for_status()
             
-            # 生成安全的文件名
-            safe_filename = re.sub(r'[^\w\-_\.]', '_', filename)
-            
-            # 根据Content-Type确定文件扩展名
-            content_type = response.headers.get('content-type', '')
-            if 'jpeg' in content_type or 'jpg' in content_type:
-                ext = '.jpg'
-            elif 'png' in content_type:
-                ext = '.png'
-            elif 'gif' in content_type:
-                ext = '.gif'
-            else:
-                ext = '.jpg'  # 默认
-            
-            file_path = self.uploads_dir / f"{safe_filename}{ext}"
-            
-            # 保存图片
-            with open(file_path, 'wb') as f:
-                f.write(response.content)
+            # 使用Pillow处理图片
+            image_data = io.BytesIO(response.content)
+            with Image.open(image_data) as img:
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGBA")
+                else:
+                    img = img.convert("RGB")
+                
+                safe_filename = re.sub(r'[^\w\-_\.]', '_', filename)
+                file_path = self.uploads_dir / f"{safe_filename}.png"
+                
+                # 保存为PNG
+                img.save(file_path, "PNG")
             
             return str(file_path)
             
         except Exception as e:
-            print(f"下载图片失败 {url}: {e}")
+            print(f"❌ 下载或转换图片失败 {url}: {e}")
             return None
+            
             
     async def _create_demo_images(self, topic, count):
         """创建演示图片文件"""
