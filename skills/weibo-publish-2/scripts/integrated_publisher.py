@@ -42,7 +42,8 @@ class UnifiedWeiboSkillOrchestrator:
         
         # 初始化各个技能实例
         self.fetcher = WeiboImageFetcher(uploads_dir=str(self.uploads_dir))
-        self.uploader = WeiboImageUploader() # uploader 内部已处理路径
+        # self.uploader = WeiboImageUploader() # uploader 内部已处理路径
+        self.uploader = WeiboImageUploader(persistent_session=True)
         
     async def run_full_workflow(self, topic, images_count=3, publish=False):
         print(f"\n🌟 开始执行全技能整合工作流: {topic}")

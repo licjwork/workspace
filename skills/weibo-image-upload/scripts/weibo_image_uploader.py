@@ -14,7 +14,7 @@ from playwright.async_api import async_playwright
 
 class WeiboImageUploader:
     def __init__(self, persistent_session=True):
-        self.profile_dir = Path.home() / '.weibo-image-profile'
+        self.profile_dir = Path.home() / '.weibo-profile'
         self.uploads_dir = Path('/home/ubuntu/.openclaw/workspace/uploads')
         self.persistent_session = persistent_session
         
