@@ -106,14 +106,23 @@ class WeiboImageUploader:
 
             # 5. 发布或保持
             if publish:
-                print("🚀 正在点击发送按钮...")
-                send_btn = await page.query_selector('a.m-send-btn')
-                if send_btn:
-                    await send_btn.click()
+                print("🚀 正在执行发布操作...")
+                try:
+                    send_btn_selector = 'a.m-send-btn'
+                    # 显式等待按钮出现
+                    await page.wait_for_selector(send_btn_selector, timeout=10000)
+                    
+                    # 额外等待一秒确保图片处理完成
+                    await asyncio.sleep(2)
+                    
+                    await page.click(send_btn_selector)
+                    print("🎉 发送按钮已点击，正在等待确认...")
+                    
+                    # 等待页面跳转或成功提示（通常跳转回主页或弹出提示）
                     await asyncio.sleep(3)
-                    print("🎉 发布成功！")
-                else:
-                    print("❌ 未找到发送按钮")
+                    print("✅ 微博发布任务已完成！")
+                except Exception as e:
+                    print(f"❌ 点击发送按钮失败: {e}")
             else:
                 print("💾 图片已进入编辑区域，程序将保持 10 秒供你确认...")
                 await asyncio.sleep(10)
