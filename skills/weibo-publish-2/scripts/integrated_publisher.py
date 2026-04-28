@@ -12,7 +12,7 @@ from pathlib import Path
 import argparse
 
 # 动态添加路径以确保可以导入各个技能模块
-WORKSPACE_ROOT = Path('/Users/cjli/gemini-project/狗蛋/workspace')
+WORKSPACE_ROOT = Path('/home/ubuntu/.openclaw/workspace')
 sys.path.append(str(WORKSPACE_ROOT / 'skills/weibo-hot-search-images/scripts'))
 sys.path.append(str(WORKSPACE_ROOT / 'skills/weibo-image-upload/scripts'))
 sys.path.append(str(WORKSPACE_ROOT / 'skills/weibo-publish-2/scripts'))
