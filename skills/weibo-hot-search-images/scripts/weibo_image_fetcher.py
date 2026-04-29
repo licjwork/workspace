@@ -88,14 +88,17 @@ class WeiboImageFetcher:
                 await page.evaluate("window.scrollTo(0, document.body.scrollHeight/2)")
                 await asyncio.sleep(1)
                 
-                # 提取所有图片 URL
+                # 提取所有图片 URL（匹配所有 sinaimg.cn 图片）
                 image_urls = await page.evaluate("""() => {
                     const imgs = Array.from(document.querySelectorAll('img'));
                     return imgs.map(img => img.src || img.dataset.src)
-                        .filter(src => src && (src.includes('sinaimg.cn/large') || src.includes('sinaimg.cn/mw690') || src.includes('sinaimg.cn/orj360')));
+                        .filter(src => src && src.includes('sinaimg.cn') 
+                            && !src.includes('face') && !src.includes('avatar')
+                            && !src.includes('icon') && !src.includes('emoticon'));
                 }""")
                 
-                # 去重
+                # 强制升级为原图 URL 并去重
+                image_urls = [self._upgrade_to_original(u) for u in image_urls]
                 image_urls = list(dict.fromkeys(image_urls))[:max_images]
                 
                 if not image_urls:
@@ -120,19 +123,45 @@ class WeiboImageFetcher:
                 await browser.close()
                 return []
 
+    @staticmethod
+    def _upgrade_to_original(url):
+        """
+        将 sinaimg.cn 图片 URL 升级为原图分辨率。
+        微博图床格式: https://wx1.sinaimg.cn/{size_segment}/{image_id}.jpg
+        把 mw690/orj360/thumb150 等替换为 large 即可拿到原图。
+        """
+        # 已知的低分辨率路径段
+        low_res_segments = [
+            '/thumb150/', '/thumb180/', '/thumb300/',
+            '/orj360/', '/orj480/',
+            '/mw690/', '/mw1024/', '/mw2000/',
+            '/bmiddle/', '/small/', '/square/',
+        ]
+        for seg in low_res_segments:
+            if seg in url:
+                url = url.replace(seg, '/large/')
+                break
+        return url
+
     def _download_image(self, url, filename):
-        """下载并转换为 PNG"""
+        """下载原图并转换为 PNG"""
         try:
             # 确保 URL 是 https
             if url.startswith('//'): url = 'https:' + url
             
-            # 微博图床有时需要 Referer
-            headers = {'Referer': 'https://weibo.com/'}
-            response = requests.get(url, headers=headers, timeout=15)
+            # 微博图床需要 Referer
+            headers = {
+                'Referer': 'https://weibo.com/',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+            }
+            response = requests.get(url, headers=headers, timeout=30)
             response.raise_for_status()
             
             image_data = io.BytesIO(response.content)
             with Image.open(image_data) as img:
+                # 记录原图尺寸
+                print(f"  📐 原图尺寸: {img.width}x{img.height}")
+                
                 if img.mode in ("RGBA", "P"):
                     img = img.convert("RGBA")
                 else:
