@@ -200,16 +200,16 @@ class PlaywrightWeiboPublisher:
         return content
 
     async def publish_weibo(self, content):
-        """发布微博 - Playwright版本"""
+        """发布微博 - 网页版本"""
         print("\n🚀 第四步：正在发布微博...")
         
         try:
             # 导航到发布页面
-            await self.page.goto('https://m.weibo.cn/compose', wait_until='networkidle')
+            await self.page.goto('https://weibo.com/compose', wait_until='networkidle')
             await self.page.wait_for_timeout(3000)
             
             # 等待文本框出现
-            textarea_selector = 'textarea[placeholder*="分享新鲜事"]'
+            textarea_selector = 'textarea._input_13iqr_8'
             await self.page.wait_for_selector(textarea_selector, timeout=10000)
             
             # 输入内容
@@ -217,21 +217,9 @@ class PlaywrightWeiboPublisher:
             await self.page.wait_for_timeout(1000)
             
             # 点击发布按钮
-            publish_selectors = ['a.m-send-btn', 'button:has-text("发送")', 'a:has-text("发布")']
-            publish_button = None
-            for selector in publish_selectors:
-                try:
-                    publish_button = await self.page.wait_for_selector(selector, timeout=2000)
-                    if publish_button:
-                        await publish_button.click()
-                        print(f"✅ 使用选择器 '{selector}' 点击了发布按钮")
-                        break
-                except:
-                    continue
-            
-            if not publish_button:
-                print("❌ 未找到发布按钮")
-                return False
+            send_button_selector = 'button.woo-button-main.woo-button-flat.woo-button-primary'
+            await self.page.wait_for_selector(send_button_selector, timeout=10000)
+            await self.page.click(send_button_selector)
             
             # 等待发布完成
             await self.page.wait_for_timeout(3000)

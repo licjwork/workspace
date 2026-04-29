@@ -20,7 +20,7 @@ sys.path.append(str(WORKSPACE_ROOT / 'skills/weibo-publish-2/scripts'))
 # 导入各个独立技能
 try:
     from weibo_image_fetcher import WeiboImageFetcher
-    from weibo_image_uploader import WeiboImageUploader
+    from stable_publisher_mobile_method import StableWeiboPublisherMobileMethod
     from improved_content_generator import call_dogegg_ai
     print("✅ 所有技能模块导入成功")
 except ImportError as e:
@@ -29,9 +29,12 @@ except ImportError as e:
     class WeiboImageFetcher: 
         def __init__(self, **kwargs): pass
         async def search_topic_images(self, topic, **kwargs): return []
-    class WeiboImageUploader:
-        def __init__(self, **kwargs): pass
-        async def upload_images(self, **kwargs): pass
+    class StableWeiboPublisherMobileMethod:
+        def __init__(self, topic, **kwargs): pass
+        async def init_browser(self): pass
+        async def check_login_status(self): return True
+        async def publish_weibo(self, content): pass
+        async def cleanup(self): pass
     def call_dogegg_ai(topic, context): return f"关于#{topic}#的内容"
 
 class UnifiedWeiboSkillOrchestrator:
@@ -42,8 +45,7 @@ class UnifiedWeiboSkillOrchestrator:
         
         # 初始化各个技能实例
         self.fetcher = WeiboImageFetcher(uploads_dir=str(self.uploads_dir))
-        # self.uploader = WeiboImageUploader() # uploader 内部已处理路径
-        self.uploader = WeiboImageUploader(persistent_session=True)
+        # uploader 将在需要时动态实例化，因为需要传入 topic
         
     async def run_full_workflow(self, topic, images_count=3, publish=False):
         print(f"\n🌟 开始执行全技能整合工作流: {topic}")
@@ -65,15 +67,30 @@ class UnifiedWeiboSkillOrchestrator:
         print(f"📝 生成内容: {content[:30]}...")
 
         # 3. 执行【图片上传与发布技能】
-        print("\nStep 3: 正在运行图片上传与发布技能...")
-        # 提取文件名
-        filenames = [os.path.basename(p) for p in image_paths]
+        print("\nStep 3: 正在运行图片上传与发布技能 (网页版)...")
         
-        await self.uploader.upload_images(
-            text=content,
-            files=filenames if filenames else None,
-            publish=publish
-        )
+        # 使用网页版微博发布方法
+        publisher = StableWeiboPublisherMobileMethod(topic, persistent_session=True)
+        # 提供完整的图片路径列表
+        publisher.image_paths = image_paths if image_paths else []
+        
+        try:
+            await publisher.init_browser()
+            
+            if not await publisher.check_login_status():
+                print("❌ 微博未登录，请先运行登录流程")
+            else:
+                if publish:
+                    await publisher.publish_weibo(content)
+                else:
+                    print("⚠️ publish 参数未设置，当前流程为：仅生成和获取图片，不执行点击发布 (可根据需要修改代码执行预填)。")
+                    # 这里我们可以选择调用 publish_weibo，如果想让它填入但不点击，需要修改 publisher 代码，
+                    # 但为了兼容，我们按 publish=True 来演示（或者如果是测试可以跳过）。
+                    # 这里我们按原来的逻辑，如果 publish=True 才发送
+        except Exception as e:
+            print(f"❌ 发布过程中发生错误: {e}")
+        finally:
+            await publisher.cleanup()
         
         print("-" * 40)
         print("🏁 全技能整合工作流执行完毕！")

@@ -40,30 +40,31 @@ class WeiboImageUploader:
                 context = await p.chromium.launch_persistent_context(
                     str(self.profile_dir),
                     headless=False, # 建议非静默模式，方便观察或手动登录
-                    viewport={'width': 400, 'height': 800}, # 模拟手机视图
-                    user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
+                    viewport={'width': 1200, 'height': 800}, # PC 视图
+                    user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
                 )
             else:
                 browser = await p.chromium.launch(headless=False)
                 context = await browser.new_context(
-                    viewport={'width': 400, 'height': 800},
-                    user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
+                    viewport={'width': 1200, 'height': 800},
+                    user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
                 )
 
             page = await context.new_page()
             
             # 1. 访问发布页面
             print("🌐 访问微博发布页面...")
-            await page.goto('https://m.weibo.cn/compose/', wait_until='networkidle')
-            await asyncio.sleep(15)
+            await page.goto('https://weibo.com/', wait_until='domcontentloaded')
+            await asyncio.sleep(8)
 
             # 检查是否需要登录
-            if "login" in page.url or await page.query_selector('.login-wrapper'):
+            if "login.sina.com.cn" in page.url or "passport.weibo.com" in page.url or await page.query_selector('.login-wrapper, [action*="login"]'):
                 print("🔑 检测到未登录状态，请在浏览器窗口中完成登录...")
-                # 等待用户登录，直到跳转回 compose 页面
-                while "compose" not in page.url:
+                # 等待用户登录，直到跳转回首页
+                while "login" in page.url or "passport" in page.url:
                     await asyncio.sleep(1)
                 print("✅ 登录成功，继续操作")
+                await asyncio.sleep(5)
 
             # 2. 填写正文
             if text:
@@ -86,15 +87,17 @@ class WeiboImageUploader:
             print(f"📸 准备上传 {len(file_paths)} 张图片...")
 
             # 4. 触发上传
-            # 微博移动端通常有一个隐藏的 input[type="file"]
+            # 微博PC端通常有一个隐藏的 input[type="file"]
             file_input = await page.query_selector('input[type="file"]')
             if not file_input:
-                # 有时需要点击“图片”图标才会显示 input
-                image_icon = await page.query_selector('.m-font-pic')
-                if image_icon:
-                    await image_icon.click()
-                    await asyncio.sleep(1)
-                    file_input = await page.query_selector('input[type="file"]')
+                # 点击图片图标以展开上传区域
+                image_icons = await page.locator('i.woo-icon:has-text("图片"), i[title="图片"], .image-icon, [title="图片"]').all()
+                for icon in image_icons:
+                    if await icon.is_visible():
+                        await icon.click()
+                        await asyncio.sleep(1)
+                        break
+                file_input = await page.query_selector('input[type="file"]')
 
             if file_input:
                 await file_input.set_input_files(file_paths)
@@ -108,15 +111,25 @@ class WeiboImageUploader:
             if publish:
                 print("🚀 正在执行发布操作...")
                 try:
-                    send_btn_selector = 'a.m-send-btn'
-                    # 显式等待按钮出现
-                    await page.wait_for_selector(send_btn_selector, timeout=40000)
+                    send_btn_selector = 'button:has-text("发送"), button:has-text("发布"), .send_weibo_btn, a.W_btn_a'
                     
-                    # 额外等待一秒确保图片处理完成
-                    await asyncio.sleep(15)
-                    
-                    await page.click(send_btn_selector)
-                    print("🎉 发送按钮已点击，正在等待确认...")
+                    # 尝试点击发送按钮
+                    publish_button = None
+                    for selector in send_btn_selector.split(','):
+                        selector = selector.strip()
+                        try:
+                            btn = await page.wait_for_selector(selector, timeout=2000)
+                            if btn and await btn.is_visible():
+                                publish_button = btn
+                                break
+                        except:
+                            continue
+                            
+                    if publish_button:
+                        # 额外等待一秒确保图片处理完成
+                        await asyncio.sleep(2)
+                        await publish_button.click()
+                        print("🎉 发送按钮已点击，正在等待确认...")
                     
                     # 等待页面跳转或成功提示（通常跳转回主页或弹出提示）
                     await asyncio.sleep(3)
