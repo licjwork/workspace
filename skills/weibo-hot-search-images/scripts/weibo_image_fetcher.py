@@ -88,13 +88,14 @@ class WeiboImageFetcher:
                 await page.evaluate("window.scrollTo(0, document.body.scrollHeight/2)")
                 await asyncio.sleep(1)
                 
-                # 提取所有图片 URL（匹配所有 sinaimg.cn 图片）
+                # 提取微博正文配图 URL
+                # 微博用户配图的 URL 格式固定: sinaimg.cn/{尺寸段}/{16+位字母数字ID}.jpg
+                # 通过正则匹配这个格式，精准排除 UI 图标、表情、头像等干扰图片
                 image_urls = await page.evaluate("""() => {
+                    const pattern = /sinaimg\.cn\/(large|mw2000|mw1024|mw690|orj360|orj480|bmiddle|thumb\d+)\/([a-zA-Z0-9]{16,})\.\w+/;
                     const imgs = Array.from(document.querySelectorAll('img'));
                     return imgs.map(img => img.src || img.dataset.src)
-                        .filter(src => src && src.includes('sinaimg.cn') 
-                            && !src.includes('face') && !src.includes('avatar')
-                            && !src.includes('icon') && !src.includes('emoticon'));
+                        .filter(src => src && pattern.test(src));
                 }""")
                 
                 # 强制升级为原图 URL 并去重
