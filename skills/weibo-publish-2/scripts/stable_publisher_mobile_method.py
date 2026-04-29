@@ -5,7 +5,7 @@ import asyncio
 from playwright.async_api import async_playwright
 from improved_content_generator import call_dogegg_ai
 
-class StableWeiboPublisher:
+class StableWeiboPublisherMobileMethod:
     def __init__(self, topic, persistent_session=True):
         self.topic = topic
         self.persistent_session = persistent_session
@@ -67,49 +67,72 @@ class StableWeiboPublisher:
             await self.page.fill(textarea_selector, content)
             await self.page.wait_for_timeout(1000)
             
-            # 上传图片（如果有）
-            if hasattr(self, 'image_paths') and self.image_paths:
+            # 上传图片（借鉴移动端方法）
+            if self.image_paths:
                 print(f"📸 正在上传 {len(self.image_paths)} 张图片...")
                 
-                # 先点击图片上传按钮触发文件输入框
                 try:
-                    # 尝试多种可能的图片上传按钮选择器
-                    image_button_selectors = [
-                        '[aria-label*="图片"]',
-                        '[class*="photo"]',
-                        '[class*="image"]',
-                        'button[class*="photo"]',
-                        'div[class*="photo"]',
-                        'span[class*="photo"]'
+                    # 借鉴移动端方法：先尝试点击图片图标
+                    image_icon_selectors = [
+                        '.m-font-pic',  # 移动端选择器
+                        '[class*="pic"]',  # 可能的图片类名
+                        '[class*="photo"]',  # 照片相关
+                        '[class*="image"]',  # 图片相关
+                        'button[class*="pic"]',
+                        'div[class*="pic"]',
+                        'span[class*="pic"]'
                     ]
                     
-                    image_button_clicked = False
-                    for selector in image_button_selectors:
-                        try:
-                            if await self.page.query_selector(selector):
-                                await self.page.click(selector)
-                                image_button_clicked = True
-                                print(f"✅ 点击图片按钮: {selector}")
-                                break
-                        except:
-                            continue
+                    file_input = None
                     
-                    if not image_button_clicked:
-                        print("⚠️ 未找到图片上传按钮，尝试直接上传")
-                except Exception as e:
-                    print(f"⚠️ 点击图片按钮失败: {e}")
-                
-                # 等待并上传文件
-                file_input_selector = 'input[type="file"]._file_hqmwy_20'
-                try:
-                    await self.page.wait_for_selector(file_input_selector, timeout=10000)
-                    file_input = await self.page.query_selector(file_input_selector)
+                    # 首先查找是否已经有文件输入框
+                    file_input = await self.page.query_selector('input[type="file"]._file_hqmwy_20')
+                    
+                    if not file_input:
+                        # 尝试点击图片图标来触发文件输入框
+                        for selector in image_icon_selectors:
+                            try:
+                                icon = await self.page.query_selector(selector)
+                                if icon:
+                                    await icon.click()
+                                    await self.page.wait_for_timeout(1000)
+                                    file_input = await self.page.query_selector('input[type="file"]._file_hqmwy_20')
+                                    if file_input:
+                                        print(f"✅ 通过点击 {selector} 触发了文件输入框")
+                                        break
+                            except:
+                                continue
+                    
+                    # 如果还是找不到，尝试使用JavaScript触发
+                    if not file_input:
+                        await self.page.evaluate('''
+                            // 尝试找到并点击图片上传相关的元素
+                            const elements = document.querySelectorAll('*');
+                            for (let el of elements) {
+                                if (el.className && 
+                                    (el.className.includes('pic') || 
+                                     el.className.includes('photo') || 
+                                     el.className.includes('image')) &&
+                                    el.offsetWidth > 0 && el.offsetHeight > 0) {
+                                    el.click();
+                                    break;
+                                }
+                            }
+                        ''')
+                        await self.page.wait_for_timeout(1000)
+                        file_input = await self.page.query_selector('input[type="file"]._file_hqmwy_20')
+                    
+                    # 上传文件
                     if file_input:
                         await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(3000)  # 等待图片上传
+                        await self.page.wait_for_timeout(5000)  # 等待图片上传
                         print("✅ 图片上传成功")
                     else:
-                        print("❌ 未找到文件输入框")
+                        # 最后尝试直接使用set_input_files
+                        await self.page.set_input_files('input[type="file"]._file_hqmwy_20', self.image_paths)
+                        await self.page.wait_for_timeout(5000)
+                        print("✅ 使用直接方法上传成功")
+                        
                 except Exception as e:
                     print(f"❌ 图片上传失败: {e}")
             
@@ -169,7 +192,7 @@ async def main():
             paths = arg.replace('--images=', '').split(',')
             image_paths.extend([path.strip() for path in paths if path.strip()])
     
-    publisher = StableWeiboPublisher(topic, persistent_session=True)
+    publisher = StableWeiboPublisherMobileMethod(topic, persistent_session=True)
     publisher.image_paths = image_paths
     
     try:

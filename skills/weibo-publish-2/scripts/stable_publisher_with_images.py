@@ -13,6 +13,133 @@ class StableWeiboPublisher:
         self.browser = None
         self.page = None
         self.playwright = None
+        
+    async def init_browser(self):
+        print("🚀 正在启动Playwright浏览器...")
+        self.playwright = await async_playwright().start()
+        
+        self.browser = await self.playwright.chromium.launch_persistent_context(
+            user_data_dir=self.user_data_dir,
+            headless=True,
+            args=['--no-sandbox', '--disable-setuid-sandbox']
+        )
+        
+        self.page = await self.browser.new_page()
+        print("✅ 浏览器初始化完成")
+
+    async def check_login_status(self):
+        print("🔍 检查微博登录状态...")
+        
+        try:
+            await self.page.goto('https://weibo.com', wait_until='networkidle')
+            await self.page.wait_for_timeout(2000)
+            
+            current_url = self.page.url
+            if 'login' in current_url or 'passport' in current_url:
+                print("❌ 当前在登录页面，需要重新登录")
+                return False
+            else:
+                print("✅ 检测到已登录状态")
+                return True
+                
+        except Exception as e:
+            print(f"❌ 检查登录状态失败: {e}")
+            return False
+
+    async def generate_content(self):
+        print("\n✍️ 正在生成微博内容...")
+        
+        content = call_dogegg_ai(self.topic, f"关于话题'{self.topic}'的讨论和相关信息")
+        print(f"📝 内容生成完成，字数: {len(content)}")
+        return content
+
+    async def publish_weibo(self, content):
+        print("\n🚀 正在发布微博...")
+        
+        try:
+            await self.page.goto('https://weibo.com/compose', wait_until='networkidle')
+            await self.page.wait_for_timeout(3000)
+            
+            textarea_selector = 'textarea._input_13iqr_8'
+            await self.page.wait_for_selector(textarea_selector, timeout=10000)
+            
+            await self.page.fill(textarea_selector, content)
+            await self.page.wait_for_timeout(1000)
+            
+            send_button_selector = 'button.woo-button-main.woo-button-flat.woo-button-primary'
+            await self.page.wait_for_selector(send_button_selector, timeout=10000)
+            await self.page.click(send_button_selector)
+            
+            await self.page.wait_for_timeout(3000)
+            
+            print("✅ 微博发布成功！")
+            return True
+            
+        except Exception as e:
+            print(f"❌ 发布失败: {e}")
+            return False
+
+    async def run(self):
+        try:
+            await self.init_browser()
+            
+            if not await self.check_login_status():
+                print("❌ 需要登录，请先运行登录助手")
+                return False
+            
+            content = await self.generate_content()
+            if not content:
+                print("❌ 内容生成失败")
+                return False
+            
+            success = await self.publish_weibo(content)
+            return success
+            
+        except Exception as e:
+            print(f"❌ 运行失败: {e}")
+            return False
+        finally:
+            await self.cleanup()
+
+    async def cleanup(self):
+        if self.browser:
+            await self.browser.close()
+        if self.playwright:
+            await self.playwright.stop()
+        print("🧹 资源清理完成")
+
+async def main():
+    if len(sys.argv) < 2:
+        print("请提供话题参数")
+        sys.exit(1)
+    
+    topic = sys.argv[1]
+    
+    publisher = StableWeiboPublisher(topic, persistent_session=True)
+    
+    try:
+        success = await publisher.run()
+        return success
+    finally:
+        await publisher.cleanup()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+#!/usr/bin/env python3
+import os
+import sys
+import asyncio
+from playwright.async_api import async_playwright
+from improved_content_generator import call_dogegg_ai
+
+class StableWeiboPublisherWithImages:
+    def __init__(self, topic, persistent_session=True):
+        self.topic = topic
+        self.persistent_session = persistent_session
+        self.user_data_dir = os.path.expanduser('~/.weibo-profile')
+        self.browser = None
+        self.page = None
+        self.playwright = None
         self.image_paths = []
         
     async def init_browser(self):
@@ -68,48 +195,14 @@ class StableWeiboPublisher:
             await self.page.wait_for_timeout(1000)
             
             # 上传图片（如果有）
-            if hasattr(self, 'image_paths') and self.image_paths:
+            if self.image_paths:
                 print(f"📸 正在上传 {len(self.image_paths)} 张图片...")
                 
-                # 先点击图片上传按钮触发文件输入框
                 try:
-                    # 尝试多种可能的图片上传按钮选择器
-                    image_button_selectors = [
-                        '[aria-label*="图片"]',
-                        '[class*="photo"]',
-                        '[class*="image"]',
-                        'button[class*="photo"]',
-                        'div[class*="photo"]',
-                        'span[class*="photo"]'
-                    ]
-                    
-                    image_button_clicked = False
-                    for selector in image_button_selectors:
-                        try:
-                            if await self.page.query_selector(selector):
-                                await self.page.click(selector)
-                                image_button_clicked = True
-                                print(f"✅ 点击图片按钮: {selector}")
-                                break
-                        except:
-                            continue
-                    
-                    if not image_button_clicked:
-                        print("⚠️ 未找到图片上传按钮，尝试直接上传")
-                except Exception as e:
-                    print(f"⚠️ 点击图片按钮失败: {e}")
-                
-                # 等待并上传文件
-                file_input_selector = 'input[type="file"]._file_hqmwy_20'
-                try:
-                    await self.page.wait_for_selector(file_input_selector, timeout=10000)
-                    file_input = await self.page.query_selector(file_input_selector)
-                    if file_input:
-                        await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(3000)  # 等待图片上传
-                        print("✅ 图片上传成功")
-                    else:
-                        print("❌ 未找到文件输入框")
+                    # 使用JavaScript直接设置文件
+                    await self.page.set_input_files('input[type="file"]._file_hqmwy_20', self.image_paths)
+                    await self.page.wait_for_timeout(3000)  # 等待图片上传
+                    print("✅ 图片上传成功")
                 except Exception as e:
                     print(f"❌ 图片上传失败: {e}")
             
@@ -169,7 +262,7 @@ async def main():
             paths = arg.replace('--images=', '').split(',')
             image_paths.extend([path.strip() for path in paths if path.strip()])
     
-    publisher = StableWeiboPublisher(topic, persistent_session=True)
+    publisher = StableWeiboPublisherWithImages(topic, persistent_session=True)
     publisher.image_paths = image_paths
     
     try:

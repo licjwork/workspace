@@ -13,7 +13,6 @@ class StableWeiboPublisher:
         self.browser = None
         self.page = None
         self.playwright = None
-        self.image_paths = []
         
     async def init_browser(self):
         print("🚀 正在启动Playwright浏览器...")
@@ -67,52 +66,6 @@ class StableWeiboPublisher:
             await self.page.fill(textarea_selector, content)
             await self.page.wait_for_timeout(1000)
             
-            # 上传图片（如果有）
-            if hasattr(self, 'image_paths') and self.image_paths:
-                print(f"📸 正在上传 {len(self.image_paths)} 张图片...")
-                
-                # 先点击图片上传按钮触发文件输入框
-                try:
-                    # 尝试多种可能的图片上传按钮选择器
-                    image_button_selectors = [
-                        '[aria-label*="图片"]',
-                        '[class*="photo"]',
-                        '[class*="image"]',
-                        'button[class*="photo"]',
-                        'div[class*="photo"]',
-                        'span[class*="photo"]'
-                    ]
-                    
-                    image_button_clicked = False
-                    for selector in image_button_selectors:
-                        try:
-                            if await self.page.query_selector(selector):
-                                await self.page.click(selector)
-                                image_button_clicked = True
-                                print(f"✅ 点击图片按钮: {selector}")
-                                break
-                        except:
-                            continue
-                    
-                    if not image_button_clicked:
-                        print("⚠️ 未找到图片上传按钮，尝试直接上传")
-                except Exception as e:
-                    print(f"⚠️ 点击图片按钮失败: {e}")
-                
-                # 等待并上传文件
-                file_input_selector = 'input[type="file"]._file_hqmwy_20'
-                try:
-                    await self.page.wait_for_selector(file_input_selector, timeout=10000)
-                    file_input = await self.page.query_selector(file_input_selector)
-                    if file_input:
-                        await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(3000)  # 等待图片上传
-                        print("✅ 图片上传成功")
-                    else:
-                        print("❌ 未找到文件输入框")
-                except Exception as e:
-                    print(f"❌ 图片上传失败: {e}")
-            
             send_button_selector = 'button.woo-button-main.woo-button-flat.woo-button-primary'
             await self.page.wait_for_selector(send_button_selector, timeout=10000)
             await self.page.click(send_button_selector)
@@ -162,15 +115,7 @@ async def main():
     
     topic = sys.argv[1]
     
-    # 解析图片路径参数
-    image_paths = []
-    for arg in sys.argv[2:]:
-        if arg.startswith('--images='):
-            paths = arg.replace('--images=', '').split(',')
-            image_paths.extend([path.strip() for path in paths if path.strip()])
-    
     publisher = StableWeiboPublisher(topic, persistent_session=True)
-    publisher.image_paths = image_paths
     
     try:
         success = await publisher.run()
