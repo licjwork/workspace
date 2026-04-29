@@ -55,7 +55,7 @@ class WeiboImageUploader:
             # 1. 访问发布页面
             print("🌐 访问微博发布页面...")
             await page.goto('https://m.weibo.cn/compose/', wait_until='networkidle')
-            await asyncio.sleep(2)
+            await asyncio.sleep(15)
 
             # 检查是否需要登录
             if "login" in page.url or await page.query_selector('.login-wrapper'):
@@ -100,7 +100,7 @@ class WeiboImageUploader:
                 await file_input.set_input_files(file_paths)
                 print("⏳ 等待图片上传完成...")
                 # 微博上传通常有进度条或缩略图预览，等待一段时间
-                await asyncio.sleep(5) 
+                await asyncio.sleep(15) 
             else:
                 print("❌ 未能定位到文件上传控件")
 
@@ -110,10 +110,10 @@ class WeiboImageUploader:
                 try:
                     send_btn_selector = 'a.m-send-btn'
                     # 显式等待按钮出现
-                    await page.wait_for_selector(send_btn_selector, timeout=10000)
+                    await page.wait_for_selector(send_btn_selector, timeout=40000)
                     
                     # 额外等待一秒确保图片处理完成
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(15)
                     
                     await page.click(send_btn_selector)
                     print("🎉 发送按钮已点击，正在等待确认...")
