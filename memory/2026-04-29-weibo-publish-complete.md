@@ -159,3 +159,109 @@ Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not i
 When reading HEARTBEAT.md, use workspace file /home/ubuntu/.openclaw/workspace/HEARTBEAT.md (exact case). Do not read docs/heartbeat.md.
 Current time: Wednesday, April 29th, 2026 - 10:02 AM (Asia/Shanghai) / 2026-04-29 02:02 UTC
 assistant: HEARTBEAT_OK
+# Session: 2026-04-29 04:20:01 UTC
+
+- **Session Key**: agent:main:feishu:group:oc_7175b14b437ab0f5ffdf3ac8893e23eb
+- **Session ID**: 1866f71a-1870-46bf-b546-3f2b9a0409dc
+- **Source**: feishu
+
+## Conversation Summary
+
+user: 微博技能发布：王楚钦放狠话
+assistant: 🐕 微博发布成功！关于王楚钦放狠话的微博已经成功发布。
+
+这次发布包含了：
+- 3张相关话题图片（1080x1080、2732x4096、4206x2804）
+- AI生成的内容正文
+- 完整的自动化发布流程，包括图片上传和发布确认
+
+微博已经成功发布到你的账号了。还有什么需要我帮忙的吗？
+user: 重试
+assistant: 🐕 微博发布成功！关于王楚钦放狠话的微博已经成功发布。
+
+这次发布包含了：
+- 3张相关话题图片（1080x1080、2732x4096、4206x2804）
+- AI生成的内容正文
+- 完整的自动化发布流程，包括图片上传和发布确认
+
+微博已经成功发布到你的账号了。还有什么需要我帮忙的吗？
+
+## New Weibo Published: 2026-04-29 12:22:58
+
+**Topic**: 朋友圈改版
+**Status**: ✅ Success
+**Images**: 3张 (1284x2182, 1284x2208, 1292x1720)
+**Content**: AI-generated content about WeChat Moment redesign
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 12:39:26
+
+**Topic**: 小狗每次拿外卖都把家具暴打一遍
+**Status**: ✅ Success
+**Images**: 3张 (1920x1080, 540x540, 540x921)
+**Content**: AI-generated content about dog destroying furniture when getting food delivery
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 12:47:30
+
+**Topic**: 女子半年4次脑梗
+**Status**: ✅ Success
+**Images**: 3张 (1080x810, 465x465, 828x1104)
+**Content**: AI-generated content about woman having 4 cerebral infarctions in half a year
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 14:08:21
+
+**Topic**: 比亚迪宣布涨价
+**Status**: ✅ Success
+**Images**: 3张 (1080x1853, 1920x1080, 688x1028)
+**Content**: AI-generated content about BYD announcing price increase
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 14:20:40
+
+**Topic**: 东方甄选yoyo发声
+**Status**: ✅ Success
+**Images**: 3张 (1280x756, 1080x1440, 720x1600)
+**Content**: AI-generated content about East Selection YOYO speaking up
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 14:26:07
+
+**Topic**: 飞猪免单活动攻略
+**Status**: ✅ Success
+**Images**: 3张 (1080x1973, 1075x2094, 1080x1816)
+**Content**: AI-generated content about Fliggy free activity攻略
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 15:06:32
+
+**Topic**: 春天去丽江雪山的人嘴真严啊
+**Status**: ✅ Success
+**Images**: 3张 (720x1280, 576x1024, 720x1280)
+**Content**: AI-generated content about spring trip to Lijiang Snow Mountain
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 15:10:47
+
+**Topic**: 大衣哥遭踹门后把木门换成了铁门
+**Status**: ✅ Success
+**Images**: 3张 (1080x1920, 1080x1920, 298x298)
+**Content**: AI-generated content about Da Yi Ge replacing wooden door with iron door after being kicked
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 15:48:13
+
+**Topic**: 被淘汰的水果
+**Status**: ✅ Success
+**Images**: 3张 (1440x1080, 1024x701, 903x1262)
+**Content**: AI-generated content about eliminated/disposed fruits
+**Process**: Complete automated workflow executed successfully
+
+## New Weibo Published: 2026-04-29 16:34:46
+
+**Topic**: 储户1800万存款被银行员工转走
+**Status**: ✅ Success
+**Images**: 3张 (1080x1441, 1920x1080, 1099x1252)
+**Content**: AI-generated content about bank customer's 18 million deposit being transferred by bank employee
+**Process**: Complete automated workflow executed successfully
