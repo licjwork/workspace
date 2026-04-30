@@ -12,7 +12,7 @@ async def debug_publish():
     
     try:
         # 访问发布页面
-        await publisher.page.goto('https://weibo.com/compose', wait_until='networkidle')
+        await publisher.page.goto('https://weibo.com/', wait_until='networkidle')
         await asyncio.sleep(3)
         
         # 检查页面内容

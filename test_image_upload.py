@@ -20,7 +20,7 @@ async def test_image_upload():
         
         # 导航到微博发布页面
         print("🌐 导航到微博发布页面...")
-        await page.goto('https://weibo.com/compose', wait_until='networkidle')
+        await page.goto('https://weibo.com/', wait_until='networkidle')
         await page.wait_for_timeout(5000)
         
         # 输入一些测试内容

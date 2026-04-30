@@ -6,7 +6,7 @@
 ## 修改内容
 - ✅ 成功将URL从m.weibo.cn改为weibo.com
 - ✅ 登录检查URL: https://weibo.com
-- ✅ 发布页面URL: https://weibo.com/compose
+- ✅ 发布页面URL: https://weibo.com/
 
 ## 遇到的问题
 1. **DOM结构差异**: 微博网页版与移动端的DOM结构完全不同

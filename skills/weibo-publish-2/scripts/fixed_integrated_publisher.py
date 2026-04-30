@@ -83,7 +83,7 @@ class StableWeiboPublisherMobileMethod:
         print("\n🚀 正在发布微博...")
         
         try:
-            await self.page.goto('https://weibo.com/compose', wait_until='networkidle')
+            await self.page.goto('https://weibo.com/', wait_until='networkidle')
             await self.page.wait_for_timeout(5000)
             
             textarea_selector = 'textarea._input_13iqr_8'
