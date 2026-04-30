@@ -102,7 +102,7 @@ class StableWeiboPublisherMobileMethod:
                     
                     if file_input:
                         await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(35000)  # 增加等待时间到35秒，确保图片完全上传
+                        await self.page.wait_for_timeout(20000)  # 增加等待时间到35秒，确保图片完全上传
                         print("✅ 图片上传成功")
                     else:
                         print("❌ 未找到文件输入框")
