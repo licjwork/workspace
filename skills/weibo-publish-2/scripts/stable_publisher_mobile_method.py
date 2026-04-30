@@ -125,12 +125,12 @@ class StableWeiboPublisherMobileMethod:
                     # 上传文件
                     if file_input:
                         await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(5000)  # 等待图片上传
+                        await self.page.wait_for_timeout(15000)  # 等待图片上传
                         print("✅ 图片上传成功")
                     else:
                         # 最后尝试直接使用set_input_files
                         await self.page.set_input_files('input[type="file"]._file_hqmwy_20', self.image_paths)
-                        await self.page.wait_for_timeout(5000)
+                        await self.page.wait_for_timeout(15000)
                         print("✅ 使用直接方法上传成功")
                         
                 except Exception as e:
