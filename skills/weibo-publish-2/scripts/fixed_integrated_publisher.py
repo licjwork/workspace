@@ -21,7 +21,7 @@ sys.path.append(str(WORKSPACE_ROOT / 'skills/weibo-publish-2/scripts'))
 # 导入各个独立技能
 try:
     from weibo_image_fetcher import WeiboImageFetcher
-    # from stable_publisher_mobile_method import StableWeiboPublisherMobileMethod
+    from stable_publisher_mobile_method import StableWeiboPublisherMobileMethod
     from improved_content_generator import call_dogegg_ai
     print("✅ 所有技能模块导入成功")
 except ImportError as e:
@@ -37,98 +37,6 @@ except ImportError as e:
         async def publish_weibo(self, content): pass
         async def cleanup(self): pass
     def call_dogegg_ai(topic, context): return f"关于#{topic}#的内容"
-
-class StableWeiboPublisherMobileMethod:
-    def __init__(self, topic, image_paths=None):
-        self.topic = topic
-        self.image_paths = image_paths or []
-        self.user_data_dir = os.path.expanduser('~/.weibo-profile')
-        self.browser = None
-        self.page = None
-        self.playwright = None
-        
-    async def init_browser(self):
-        print("🚀 正在启动Playwright浏览器...")
-        self.playwright = await async_playwright().start()
-        
-        self.browser = await self.playwright.chromium.launch_persistent_context(
-            user_data_dir=self.user_data_dir,
-            headless=False,
-            args=['--no-sandbox', '--disable-setuid-sandbox']
-        )
-        
-        self.page = await self.browser.new_page()
-        print("✅ 浏览器初始化完成")
-
-    async def check_login_status(self):
-        print("🔍 检查微博登录状态...")
-        
-        try:
-            await self.page.goto('https://weibo.com', wait_until='networkidle')
-            await self.page.wait_for_timeout(2000)
-            
-            current_url = self.page.url
-            if 'login' in current_url or 'passport' in current_url:
-                print("❌ 当前在登录页面，需要重新登录")
-                return False
-            else:
-                print("✅ 检测到已登录状态")
-                return True
-                
-        except Exception as e:
-            print(f"❌ 检查登录状态失败: {e}")
-            return False
-
-    async def publish_weibo(self, content):
-        print("\n🚀 正在发布微博...")
-        
-        try:
-            await self.page.goto('https://weibo.com/', wait_until='networkidle')
-            await self.page.wait_for_timeout(5000)
-            
-            textarea_selector = 'textarea._input_13iqr_8'
-            await self.page.wait_for_selector(textarea_selector, timeout=10000)
-            
-            await self.page.fill(textarea_selector, content)
-            await self.page.wait_for_timeout(2000)
-            
-            # 上传图片
-            if self.image_paths:
-                print(f"📸 正在上传 {len(self.image_paths)} 张图片...")
-                
-                try:
-                    # 查找文件输入框
-                    file_input = await self.page.query_selector('input[type="file"]._file_hqmwy_20')
-                    
-                    if file_input:
-                        await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(20000)  # 增加等待时间到20秒，确保图片完全上传
-                        print("✅ 图片上传成功")
-                    else:
-                        print("❌ 未找到文件输入框")
-                        
-                except Exception as e:
-                    print(f"❌ 图片上传失败: {e}")
-            
-            send_button_selector = 'button.woo-button-main.woo-button-flat.woo-button-primary'
-            await self.page.wait_for_selector(send_button_selector, timeout=10000)
-            await self.page.click(send_button_selector)
-            
-            await self.page.wait_for_timeout(5000)
-            
-            print("✅ 微博发布成功！")
-            return True
-            
-        except Exception as e:
-            print(f"❌ 发布失败: {e}")
-            return False
-
-    async def cleanup(self):
-        if self.browser:
-            await self.browser.close()
-        if self.playwright:
-            await self.playwright.stop()
-        print("🧹 资源清理完成")
 
 class FixedUnifiedWeiboSkillOrchestrator:
     def __init__(self):
@@ -162,7 +70,8 @@ class FixedUnifiedWeiboSkillOrchestrator:
         print("\nStep 3: 正在运行图片上传与发布技能 (修复版)...")
         
         # 使用修复的发布方法
-        publisher = StableWeiboPublisherMobileMethod(topic, image_paths if image_paths else [])
+        publisher = StableWeiboPublisherMobileMethod(topic)
+        publisher.image_paths = image_paths if image_paths else []
         
         try:
             await publisher.init_browser()
