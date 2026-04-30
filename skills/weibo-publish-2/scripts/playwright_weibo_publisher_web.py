@@ -136,15 +136,33 @@ class PlaywrightWeiboPublisher:
                         await self.page.wait_for_timeout(1000)
                         file_input = await self.page.query_selector('input[type="file"]._file_hqmwy_20')
                     
-                    # 上传图片
+                    # 上传图片并等待完成
                     if file_input:
-                        for image_path in image_paths:
+                        for idx, image_path in enumerate(image_paths):
                             if os.path.exists(image_path):
                                 await file_input.set_input_files(image_path)
-                                await self.page.wait_for_timeout(2000)
-                                print(f"✅ 已上传图片: {os.path.basename(image_path)}")
+                                print(f"⏳ 正在上传图片 {idx+1}: {os.path.basename(image_path)}")
+                                
+                                # 等待上传完成（增加重试和超时）
+                                for attempt in range(3):  # 最多重试3次
+                                    try:
+                                        # 等待上传进度条消失 - 使用更可靠的selector（根据微博页面调整）
+                                        await self.page.wait_for_selector(
+                                            f'div[class*="woo-progress"]:nth-child({idx+1})',  # 微博常见的进度条class
+                                            state='detached',
+                                            timeout=60000  # 60秒超时
+                                        )
+                                        print(f"✅ 图片 {idx+1} 上传完成")
+                                        break
+                                    except Exception as e:
+                                        print(f"⚠️ 图片 {idx+1} 上传等待超时 (尝试 {attempt+1}): {e}")
+                                        await self.page.wait_for_timeout(5000)  # 等待5秒后重试
+                                else:
+                                    print(f"❌ 图片 {idx+1} 上传失败，跳过")
                             else:
                                 print(f"❌ 图片文件不存在: {image_path}")
+                            
+                        await self.page.wait_for_timeout(2000)  # 所有图片上传后的额外等待
                     else:
                         print("❌ 未找到文件输入框，无法上传图片")
                         
@@ -156,9 +174,18 @@ class PlaywrightWeiboPublisher:
                 send_button_selector = 'button.woo-button-main.woo-button-flat.woo-button-primary'
                 await self.page.wait_for_selector(send_button_selector, timeout=10000)
                 await self.page.click(send_button_selector)
-                await self.page.wait_for_timeout(3000)
-                print("✅ 微博发布成功！")
-                return True
+                
+                # 动态等待发布成功
+                try:
+                    await self.page.wait_for_selector(
+                        'div[class*="publish-success"]',  # 假设成功提示的selector，根据实际页面调整
+                        timeout=60000
+                    )
+                    print("✅ 微博发布成功（确认提示出现）！")
+                    return True
+                except Exception as e:
+                    print(f"❌ 发布等待超时: {e}")
+                    return False
             except Exception as e:
                 print(f"❌ 点击发布按钮时出错: {e}")
                 return False
