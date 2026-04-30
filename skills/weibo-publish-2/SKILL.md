@@ -4,27 +4,53 @@
 
 ## 工作流程
 
-1. **自动搜图**：根据指定的话题，在微博移动端搜索并下载最相关的配图（自动转换为 PNG）。
+1. **自动搜图**：根据指定的话题，在微博搜索并下载最相关的配图（自动转换为 PNG）。
 2. **AI 内容创作**：利用 AI 针对该话题生成一段富有吸引力的正文内容。
 3. **自动化发布**：启动 Playwright 自动化浏览器，复用持久化会话：
-    - 填写 AI 生成的文字。
-    - 上传下载好的图片。
-    - 执行最终发布。
+    - 访问微博首页验证登录状态
+    - 填写 AI 生成的文字内容
+    - 上传下载好的图片（最多9张）
+    - 执行最终发布
 
 ## 优势
+
 - **全流程自动化**：只需输入话题名称，即可完成从素材准备到发布的所有操作。
 - **高成功率**：基于浏览器模拟，有效绕过 API 限制和访客拦截。
 - **环境隔离**：图片统一存储在 `uploads`，博文即发即走，不留冗余。
+- **持久化登录**：使用 `~/.weibo-profile` 目录保存登录状态，无需每次登录。
 
 ## 使用方法
+
+### 首次使用：登录微博
+
 ```bash
-python3 skills/weibo-publish-2/scripts/integrated_publisher.py --topic "你的话题" --images 3 --publish
+python3 skills/weibo-publish-2/scripts/login_weibo.py
 ```
 
+该脚本会以非静默模式打开浏览器，您只需在弹出的窗口中手动完成登录即可，登录状态会自动保存。
+
+### 执行发布
+
+```bash
+python3 skills/weibo-publish-2/scripts/fixed_integrated_publisher.py --topic "你的话题" --images 3 --publish
+```
+
+**参数说明：**
+- `--topic`：必填参数，指定要发布的话题名称
+- `--images`：可选参数，指定配图数量，默认为 3 张
+- `--publish`：可选参数，添加此参数才会实际执行发布操作
+
 ## 注意事项
-- 需确保本地 Playwright 环境正常。
-- 建议定期使用专门的登录脚本刷新登录态：
-  ```bash
-  python3 skills/weibo-publish-2/scripts/login_weibo.py
-  ```
-  该脚本会自动以非静默模式加载 `~/.weibo-profile` 目录并打开浏览器，您只需在弹出的窗口中手动完成登录即可。
+
+- 需确保本地 Playwright 环境正常安装。
+- 首次使用前必须运行登录脚本获取登录态。
+- 建议定期使用登录脚本刷新登录态，避免会话过期。
+- 图片上传可能需要较长时间，请确保网络稳定。
+- 如果发布失败，请检查浏览器是否已正确登录微博账号。
+
+## 依赖安装
+
+```bash
+pip install -r skills/weibo-publish-2/requirements.txt
+playwright install chromium
+```
