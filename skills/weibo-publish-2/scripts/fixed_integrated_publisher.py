@@ -95,7 +95,8 @@ async def main():
     parser = argparse.ArgumentParser(description='微博全自动发布工具 (修复版)')
     parser.add_argument('--topic', type=str, required=True, help='微博话题')
     parser.add_argument('--images', type=int, default=3, help='配图数量')
-    parser.add_argument('--publish', action='store_true', help='是否直接发布')
+    parser.add_argument("--publish", action="store_true", help="是否直接发布")
+    parser.set_defaults(publish=True)
     
     args = parser.parse_args()
     
