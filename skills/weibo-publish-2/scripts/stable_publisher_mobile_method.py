@@ -59,7 +59,7 @@ class StableWeiboPublisherMobileMethod:
         
         try:
             await self.page.goto('https://weibo.com/', wait_until='networkidle')
-            await self.page.wait_for_timeout(30000)
+            await self.page.wait_for_timeout(10000)
             
             textarea_selector = 'textarea._input_13iqr_8'
             await self.page.wait_for_selector(textarea_selector, timeout=10000)
@@ -125,7 +125,7 @@ class StableWeiboPublisherMobileMethod:
                     # 上传文件
                     if file_input:
                         await file_input.set_input_files(self.image_paths)
-                        await self.page.wait_for_timeout(15000)  # 等待图片上传
+                        await self.page.wait_for_timeout(30000)  # 等待图片上传
                         print("✅ 图片上传成功")
                     else:
                         # 最后尝试直接使用set_input_files
@@ -140,7 +140,7 @@ class StableWeiboPublisherMobileMethod:
             await self.page.wait_for_selector(send_button_selector, timeout=10000)
             await self.page.click(send_button_selector)
             
-            await self.page.wait_for_timeout(30000)
+            await self.page.wait_for_timeout(10000)
             
             print("✅ 微博发布成功！")
             return True
