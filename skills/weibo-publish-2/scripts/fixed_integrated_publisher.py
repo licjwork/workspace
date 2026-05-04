@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 微博全自动发布工具 (修复版)
-集成：热搜搜图技能 + AI内容生成技能 + 图片上传发布技能
+集成：话题研究 + 热搜搜图技能 + AI内容生成技能 + 图片上传发布技能
 """
 
 import asyncio
@@ -23,6 +23,7 @@ try:
     from weibo_image_fetcher import WeiboImageFetcher
     from stable_publisher_mobile_method import StableWeiboPublisherMobileMethod
     from improved_content_generator import call_dogegg_ai
+    from topic_research import WeiboTopicResearcher
     print("✅ 所有技能模块导入成功")
 except ImportError as e:
     print(f"❌ 技能模块导入失败: {e}")
@@ -37,6 +38,8 @@ except ImportError as e:
         async def publish_weibo(self, content): pass
         async def cleanup(self): pass
     def call_dogegg_ai(topic, context): return f"关于#{topic}#的内容"
+    class WeiboTopicResearcher:
+        async def get_research_context_async(self, topic): return f"针对话题#{topic}#生成一段博文"
 
 class FixedUnifiedWeiboSkillOrchestrator:
     def __init__(self):
@@ -46,28 +49,38 @@ class FixedUnifiedWeiboSkillOrchestrator:
         
         # 初始化各个技能实例
         self.fetcher = WeiboImageFetcher(uploads_dir=str(self.uploads_dir))
+        self.researcher = WeiboTopicResearcher()
         
     async def run_full_workflow(self, topic, images_count=3, publish=False):
         print(f"\n🌟 开始执行全技能整合工作流: {topic}")
         print("-" * 40)
         
-        # 1. 执行【热搜图片获取技能】
-        print("Step 1: 正在运行图片获取技能...")
+        # 1. 执行【话题研究技能】
+        print("Step 1: 正在运行话题研究技能...")
+        try:
+            research_context = await self.researcher.get_research_context_async(topic)
+            print("✅ 话题研究完成，获取到详细内容")
+        except Exception as e:
+            print(f"⚠️ 话题研究失败，使用默认背景: {e}")
+            research_context = f"针对话题#{topic}#生成一段博文"
+        
+        # 2. 执行【热搜图片获取技能】
+        print("\nStep 2: 正在运行图片获取技能...")
         image_paths = await self.fetcher.search_topic_images(topic, max_images=images_count)
         if not image_paths:
             print("⚠️ 未能获取到图片，将仅发布文字内容")
         else:
             print(f"✅ 图片获取成功，共 {len(image_paths)} 张")
 
-        # 2. 执行【AI 内容生成技能】
-        print("\nStep 2: 正在运行 AI 内容生成技能...")
-        content = call_dogegg_ai(topic, f"针对话题#{topic}#生成一段博文")
+        # 3. 执行【AI 内容生成技能】
+        print("\nStep 3: 正在运行 AI 内容生成技能...")
+        content = call_dogegg_ai(topic, research_context)
         if not content:
             content = f"分享话题：#{topic}#"
         print(f"📝 生成内容: {content[:30]}...")
 
-        # 3. 执行【图片上传与发布技能】
-        print("\nStep 3: 正在运行图片上传与发布技能 (修复版)...")
+        # 4. 执行【图片上传与发布技能】
+        print("\nStep 4: 正在运行图片上传与发布技能 (修复版)...")
         
         # 使用修复的发布方法
         publisher = StableWeiboPublisherMobileMethod(topic)
